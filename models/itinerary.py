@@ -7,10 +7,10 @@ class Itinerary:
     def __init__(self, start, end):
         pass
 
-    @classmethod
     def route(start, end):
         ##return a distance, duration and geoJSON
         pass
+
 
 ###ITINERAIRES DIRECTS : pas besoin de transiter par une station
 class DirectItineray(Itinerary):
@@ -26,6 +26,9 @@ class FootItinerary(DirectItineray):
         resp = reponse.json()
         self.duration = resp['features'][0]["properties"]['segments'][0]['duration']
         self.distance = resp['features'][0]["properties"]['segments'][0]['distance']
+
+    def __str__(self):
+        return "L'itinéraire piéton mesure {}m et dure {}s".format(self.distance,self.duration)
 
 class TransitItinerary(DirectItineray):
     pass

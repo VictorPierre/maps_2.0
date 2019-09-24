@@ -6,11 +6,12 @@ Une interface graphique n’est pas obligatoire pour ce projet.
 
 ## Getting Started
 
-A compléter
+Dans le dossier du projet, executer le fichier 
+```__main__.py```
 
 ### Prerequisites
 
-Les librairies nécéssaires sont contenues dans le fichier requirements.txt
+Les librairies nécéssaires sont contenues dans le fichier ```requirements.txt```
 
 POur les installer, il suffit d'exécuter la commande suivante:
 ```

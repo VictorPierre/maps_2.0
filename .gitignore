@@ -1,5 +1,6 @@
 ##Virtual environment
 venv/
 .idea/
+__pycache__/
 ##Env variables
 .env
