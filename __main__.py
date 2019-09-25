@@ -1,5 +1,7 @@
 ##LOAD CLASSES
 from models import *
+from flask import Flask
+from routes import *
 
 if __name__ == "__main__":
     print('Bienvenue dans Maps 2.0')
@@ -9,3 +11,11 @@ if __name__ == "__main__":
 
     route=FootItinerary(start,end)
     print(route)
+
+    ##Launch web app
+    app.run()
+
+
+
+
+

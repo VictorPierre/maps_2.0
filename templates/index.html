@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Maps 2.0</title>
+</head>
+<body>
+    <h1>Bienvenue dans Maps 2.0 !</h1>
+
+
+    <h2>Indiquez l'itinéraire souhaité</h2>
+    <form action="/foot" method="post">
+        <div>
+            <label for="name">Lattitude de départ :</label>
+            <input type="number" value="8.681495" step="0.000001" min="0" max="10" id="start_lat" name="start_lat">
+        </div>
+        <div>
+            <label for="name">Longitude de départ :</label>
+            <input type="number" value="49.41461" step="0.000001" min="40" max="50" id="start_long" name="start_long">
+        </div>
+        <div>
+            <label for="name">Lattitude d'arrivée :</label>
+            <input type="number" value="8.687872" step="0.000001" min="0" max="10" id="end_lat" name="end_lat">
+        </div>
+        <div>
+            <label for="name">Longitude d'arrivée :</label>
+            <input type="number" value="49.420318" step="0.000001" min="40" max="50" id="end_long" name="end_long">
+        </div>
+        <input type="submit" value="Submit">
+    </form>
+
+</body>
+</html>
