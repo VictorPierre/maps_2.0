@@ -2,6 +2,10 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 import requests
+import googlemaps
+
+open_route_api_key = os.getenv("OPEN_ROUTE_SERVICE_API_KEY")
+googlemaps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
 
 class Itinerary:
     def __init__(self, start, end):
@@ -18,10 +22,8 @@ class DirectItineray(Itinerary):
 
 class FootItinerary(DirectItineray):
     def __init__(self, start, end):
-        api_key = os.getenv("OPEN_ROUTE_SERVICE_API_KEY")
-        start = str(start.lat) + ',' + str(start.long)
-        end = str(end.lat) + ',' + str(end.long)
-        params = {'api_key': api_key, 'start': start, 'end': end}
+
+        params = {'api_key': open_route_api_key, 'start': start.to_LongLat(), 'end': end.to_LongLat()}
         reponse = requests.get("https://api.openrouteservice.org/v2/directions/foot-walking", params=params)
         resp = reponse.json()
         self.duration = resp['features'][0]["properties"]['segments'][0]['duration']
@@ -31,7 +33,15 @@ class FootItinerary(DirectItineray):
         return "L'itinéraire piéton mesure {}m et dure {}s".format(self.distance,self.duration)
 
 class TransitItinerary(DirectItineray):
-    pass
+    def __init__(self, start, end):
+        gmaps = googlemaps.Client(key=googlemaps_api_key)
+        # Request directions via public transit (GoogleMaps)
+        directions_result = gmaps.directions(start.to_LatLong(), end.to_LatLong(), mode="transit")
+        self.duration = directions_result[0]['legs'][0]['duration']['value']
+        self.distance = directions_result[0]['legs'][0]['distance']['value']
+
+    def __str__(self):
+        return "L'itinéraire en transports mesure {}m et dure {}s".format(self.distance,self.duration)
 
 class BikeItinerary(DirectItineray):
     pass
