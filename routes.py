@@ -3,10 +3,12 @@ from models import *
 
 app = Flask(__name__)
 
+##Index page
 @app.route('/')
 def index():
     return render_template('index.html')
 
+##calculate itinerary from form
 @app.route('/foot', methods = ['POST'])
 def foot_itinerary():
     #Recover start & end points from the form
