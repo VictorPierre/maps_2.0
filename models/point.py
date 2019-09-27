@@ -40,8 +40,9 @@ def get_cor_from_adr(adresse):
     resp = reponse.json()
     return (resp[0]['lat'], resp[0]['lon'])
 
-PointA = Point(48.693259, 2.155216)
-print(PointA.get_adr_from_cor())
-print(get_cor_from_adr('Tour Eiffel'))
+if __name__ == "__main__":
+    PointA = Point(48.693259, 2.155216)
+    print(PointA.get_adr_from_cor())
+    print(get_cor_from_adr('Tour Eiffel'))
 
     ### TO DO : definir un point à partir d'une addresse
