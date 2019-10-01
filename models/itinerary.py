@@ -5,6 +5,7 @@ import requests
 import googlemaps
 import models.point
 from lib.openrouteservice import *
+from .itinerary_factory import *
 open_route_api_key = os.getenv("OPEN_ROUTE_SERVICE_API_KEY")
 googlemaps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
 
@@ -77,6 +78,19 @@ class TransitItinerary(DirectItineray):
 class IndirectItinerary(Itinerary):
     ##Fonction qui relie des points avec des stations
 
+    def GiveStations(self, start, end):
+        stationA = self.Station_plus_proche(start)
+        stationB = self.Station_plus_proche(end)
+        return stationA, stationB
+
+    def __init__(self , start, end, type):
+        (stationA, stationB) = self.GiveStations(start, end)
+        fact = ItineraryFactory()
+        self.routeA = FootItinerary(start,stationA)
+        self.routeB = fact.generate_route(type,stationA, stationB)
+        self.routeC = FootItinerary(stationB,end)
+        self.duration = self.routeA.duration + self.routeB.duration + self.routeC.duration
+
     def route(self,start, end, stationA, stationB):
         pass
     pass
@@ -91,17 +105,10 @@ class VelibItinerary(IndirectItinerary):
         Station = models.Point(lat, long)
         return Station
 
-    def GiveStations(self, start, end):
-        stationA = VelibItinerary.Station_plus_proche(start)
-        stationB = VelibItinerary.Station_plus_proche(end)
-        return stationA, stationB
+
 
     def __init__(self, start, end):
-        (stationA, stationB) = self.GiveStations(start, end)
-        self.routeA = FootItinerary(start,stationA)
-        self.routeB = BikeItinerary(stationA, stationB)
-        self.routeC = FootItinerary(stationB,end)
-        self.duration = self.routeA.duration + self.routeB.duration + self.routeC.duration
+        super().__init__(self, start, end, "bike")
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routeA)

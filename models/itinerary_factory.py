@@ -1,4 +1,4 @@
-from .itinerary import *
+from models.itinerary import *
 
 class ItineraryFactory:
     def generate_route(self, type, start, end):

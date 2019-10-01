@@ -3,6 +3,7 @@ from models import *
 from flask import Flask
 from routes import *
 
+
 if __name__ == "__main__":
 
     print('Bienvenue dans Maps 2.0')
@@ -11,8 +12,8 @@ if __name__ == "__main__":
     fact = ItineraryFactory()
 
 
-    route=fact.generate_route("velib", start, end)
-    print(route)
+    #route=fact.generate_route("velib", start, end)
+    #print(route)
 
 
     ##foot route
