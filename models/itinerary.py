@@ -5,9 +5,31 @@ import requests
 import googlemaps
 import models.point
 from lib.openrouteservice import *
-from .itinerary_factory import *
 open_route_api_key = os.getenv("OPEN_ROUTE_SERVICE_API_KEY")
 googlemaps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+
+class ItineraryFactory:
+    def generate_route(self, type, start, end):
+        generator = get_generator(type)
+        return generator(start, end)
+
+
+def get_generator(type):
+    if type == 'foot':
+        return FootItinerary
+    elif type == 'transit':
+        return TransitItinerary
+    elif type == 'bike':
+        return BikeItinerary
+    elif type == 'velib':
+        return VelibItinerary
+    elif type == 'electric_bike':
+        return ElectricBikeItinerary
+    elif type == 'car':
+        return CarItinerary
+    else:
+        raise ValueError('Moyen de transport inconnu')
+
 
 class Itinerary:
     def __init__(self, start, end):
@@ -97,7 +119,7 @@ class IndirectItinerary(Itinerary):
 
 class VelibItinerary(IndirectItinerary):
 
-    def Station_plus_proche(depart) :
+    def Station_plus_proche(self, depart) :
         reponse = requests.get('https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&exclude.nbbike=0&geofilter.distance=' + str(depart.lat)+'%2C+' + str(depart.long) +'%2C+1000')
         resp = reponse.json()
         lat = resp['records'][0]['fields']['geo'][0]
@@ -108,7 +130,7 @@ class VelibItinerary(IndirectItinerary):
 
 
     def __init__(self, start, end):
-        super().__init__(self, start, end, "bike")
+        super().__init__(start, end, "bike")
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routeA)

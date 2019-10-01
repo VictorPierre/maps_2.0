@@ -12,8 +12,8 @@ if __name__ == "__main__":
     fact = ItineraryFactory()
 
 
-    #route=fact.generate_route("velib", start, end)
-    #print(route)
+    route=fact.generate_route("velib", start, end)
+    print(route)
 
 
     ##foot route
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     #route=FootItinerary(start,end)
     print(route)
 
-    ##Bike route
+    ##Bike routeq
     route=BikeItinerary(start,end)
     route = fact.generate_route("bike", start, end)
     print(route)
