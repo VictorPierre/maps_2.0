@@ -22,17 +22,14 @@ if __name__ == "__main__":
     print(route)
 
     ##Bike routeq
-    route=BikeItinerary(start,end)
     route = fact.generate_route("bike", start, end)
     print(route)
 
     #Electric Bike route
-    route=ElectricBikeItinerary(start,end)
     route = fact.generate_route("electric_bike", start, end)
     print(route)
 
     ##Car route
-    route=CarItinerary(start,end)
     route = fact.generate_route("car", start, end)
     print(route)
 
