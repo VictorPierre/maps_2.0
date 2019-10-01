@@ -9,9 +9,8 @@ if __name__ == "__main__":
     start = Point(48.8327878, 2.3380036)
     end = Point(48.8450477, 2.3419488)
 
-    Station = VelibItinerary.Station_plus_proche(start)
-    print(Station.lat,Station.long)
     route = VelibItinerary(start,end)
+    print(route)
 
     ##foot route
     route=FootItinerary(start,end)
@@ -34,7 +33,7 @@ if __name__ == "__main__":
     #print(route)
 
     ##Launch web app
-    app.run()
+    #app.run()
 
 
 
