@@ -10,8 +10,8 @@ if __name__ == "__main__":
     end = Point(48.8450477, 2.3419488)
 
     ##foot route
-    route=FootItinerary(start,end)
-    print(route)
+    #route=FootItinerary(start,end)
+    #print(route)
 
     ##Cycle route
     route=BikeItinerary(start,end)
@@ -22,11 +22,11 @@ if __name__ == "__main__":
     print(route)
 
     #googlemaps transit route
-    route=TransitItinerary(start,end)
-    print(route)
+    #route=TransitItinerary(start,end)
+    #print(route)
 
     ##Launch web app
-    #app.run()
+    app.run()
 
 
 
