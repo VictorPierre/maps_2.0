@@ -3,7 +3,9 @@ import os
 load_dotenv()
 import requests
 import googlemaps
+import models.point
 from lib.openrouteservice import *
+
 
 open_route_api_key = os.getenv("OPEN_ROUTE_SERVICE_API_KEY")
 googlemaps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
@@ -30,6 +32,35 @@ class FootItinerary(DirectItineray):
         return "L'itinéraire piéton mesure {}m et dure {}s".format(self.distance,self.duration)
 
 
+class BikeItinerary(DirectItineray):
+    def __init__(self, start, end):
+        means_of_transport="cycling-regular"
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+
+    def __str__(self):
+        return "L'itinéraire en vélo mesure {}m et dure {}s".format(self.distance,self.duration)
+
+
+class ElectricBikeItinerary(DirectItineray):
+    def __init__(self, start, end):
+        means_of_transport="cycling-electric"
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+
+    def __str__(self):
+        return "L'itinéraire en vélo élétrique mesure {}m et dure {}s".format(self.distance,self.duration)
+
+
+class CarItinerary(DirectItineray):
+    def __init__(self, start, end):
+        means_of_transport="driving-car"
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+
+    def __str__(self):
+        return "L'itinéraire en voiture mesure {}m et dure {}s".format(self.distance,self.duration)
+
+
+
+
 
 class TransitItinerary(DirectItineray):
     def __init__(self, start, end):
@@ -42,17 +73,39 @@ class TransitItinerary(DirectItineray):
     def __str__(self):
         return "L'itinéraire en transports mesure {}m et dure {}s".format(self.distance,self.duration)
 
-class BikeItinerary(DirectItineray):
-    pass
 
 
 ###ITINERAIRES INDIRECTS : passe par des stations (vélib, autolib, Lime....)
 class IndirectItinerary(Itinerary):
     ##Fonction qui relie des points avec des stations
     def route(self,start, end, stationA, stationB):
+        RouteA = FootItinerary(start,stationA)
+        RouteB = BikeItinerary(stationA, stationB)
+        RouteC = FootItinerary(stationB,end)
+        print('Voici une proposition de trajet indirect')
+        print('Première étape :' + str(RouteA))
+        print('Deuxième étape :' + str(RouteB))
+        print('Troisième étape :'+str(RouteC))
+
+
         pass
     pass
 
 class VelibItinerary(IndirectItinerary):
+
+    def Station_plus_proche(depart) :
+        Station = models.Point(0, 0)
+        reponse = requests.get('https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&exclude.nbbike=0&geofilter.distance=' + str(depart.lat)+'%2C+' + str(depart.long) +'%2C+1000')
+        resp = reponse.json()
+        Station.lat = resp['records'][0]['fields']['geo'][0]
+        Station.long = resp['records'][0]['fields']['geo'][1]
+        return Station
+
     def GiveStations(self, start, end):
+        stationA = VelibItinerary.Station_plus_proche(start)
+        stationB = VelibItinerary.Station_plus_proche(end)
         return stationA, stationB
+
+    def __init__(self, start, end):
+        (stationA, stationB) = VelibItinerary.GiveStations(self, start, end)
+        self.route(start, end, stationA, stationB)

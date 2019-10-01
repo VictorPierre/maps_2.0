@@ -15,5 +15,9 @@ def get_generator(type):
         return BikeItinerary
     elif type == 'velib':
         return VelibItinerary
+    elif type == 'electric_bike':
+        return ElectricBikeItinerary
+    elif type == 'car':
+        return CarItinerary
     else:
         raise ValueError('Moyen de transport inconnu')
