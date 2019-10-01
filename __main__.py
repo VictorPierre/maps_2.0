@@ -17,12 +17,24 @@ if __name__ == "__main__":
     route=FootItinerary(start,end)
     print(route)
 
-    #googlemaps transit route
-    route=TransitItinerary(start,end)
+    ##Bike route
+    route=BikeItinerary(start,end)
     print(route)
 
+    #Electric Bike route
+    route=ElectricBikeItinerary(start,end)
+    print(route)
+
+    ##Car route
+    route=CarItinerary(start,end)
+    print(route)
+
+    #googlemaps transit route
+    #route=TransitItinerary(start,end)
+    #print(route)
+
     ##Launch web app
-    #app.run()
+    app.run()
 
 
 
