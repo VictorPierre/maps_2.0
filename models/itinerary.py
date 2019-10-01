@@ -3,6 +3,7 @@ import os
 load_dotenv()
 import requests
 import googlemaps
+import models.point
 
 open_route_api_key = os.getenv("OPEN_ROUTE_SERVICE_API_KEY")
 googlemaps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
@@ -51,9 +52,33 @@ class BikeItinerary(DirectItineray):
 class IndirectItinerary(Itinerary):
     ##Fonction qui relie des points avec des stations
     def route(self,start, end, stationA, stationB):
+        RouteA = FootItinerary(start,stationA)
+        RouteB = BikeItinerary(stationA, stationB)
+        RouteC = FootItinerary(stationB,end)
+        print('Voici une proposition de trajet indirect')
+        print('Première étape :' + str(RouteA))
+        print('Deuxième étape :' + str(RouteB))
+        print('Troisième étape :'+str(RouteC))
+
+
         pass
     pass
 
 class VelibItinerary(IndirectItinerary):
+
+    def Station_plus_proche(depart) :
+        Station = models.Point(0, 0)
+        reponse = requests.get('https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&exclude.nbbike=0&geofilter.distance=' + str(depart.lat)+'%2C+' + str(depart.long) +'%2C+1000')
+        resp = reponse.json()
+        Station.lat = resp['records'][0]['fields']['geo'][0]
+        Station.long = resp['records'][0]['fields']['geo'][1]
+        return Station
+
     def GiveStations(self, start, end):
+        stationA = VelibItinerary.Station_plus_proche(start)
+        stationB = VelibItinerary.Station_plus_proche(end)
         return stationA, stationB
+
+    def __init__(self, start, end):
+        (stationA, stationB) = VelibItinerary.GiveStations(self, start, end)
+        self.route(start, end, stationA, stationB)
