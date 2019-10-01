@@ -31,6 +31,26 @@ class FootItinerary(DirectItineray):
         return "L'itinéraire piéton mesure {}m et dure {}s".format(self.distance,self.duration)
 
 
+class BikeItinerary(DirectItineray):
+    def __init__(self, start, end):
+        means_of_transport="cycling-regular"
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+
+    def __str__(self):
+        return "L'itinéraire en vélo mesure {}m et dure {}s".format(self.distance,self.duration)
+
+
+class CarItinerary(DirectItineray):
+    def __init__(self, start, end):
+        means_of_transport="driving-car"
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+
+    def __str__(self):
+        return "L'itinéraire en voiture mesure {}m et dure {}s".format(self.distance,self.duration)
+
+
+
+
 
 class TransitItinerary(DirectItineray):
     def __init__(self, start, end):
@@ -43,8 +63,6 @@ class TransitItinerary(DirectItineray):
     def __str__(self):
         return "L'itinéraire en transports mesure {}m et dure {}s".format(self.distance,self.duration)
 
-class BikeItinerary(DirectItineray):
-    pass
 
 
 ###ITINERAIRES INDIRECTS : passe par des stations (vélib, autolib, Lime....)
