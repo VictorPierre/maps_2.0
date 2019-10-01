@@ -40,6 +40,15 @@ class BikeItinerary(DirectItineray):
         return "L'itinéraire en vélo mesure {}m et dure {}s".format(self.distance,self.duration)
 
 
+class ElectricBikeItinerary(DirectItineray):
+    def __init__(self, start, end):
+        means_of_transport="cycling-electric"
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+
+    def __str__(self):
+        return "L'itinéraire en vélo élétrique mesure {}m et dure {}s".format(self.distance,self.duration)
+
+
 class CarItinerary(DirectItineray):
     def __init__(self, start, end):
         means_of_transport="driving-car"

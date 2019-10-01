@@ -10,11 +10,15 @@ if __name__ == "__main__":
     end = Point(48.8450477, 2.3419488)
 
     ##foot route
-    #route=FootItinerary(start,end)
-    #print(route)
+    route=FootItinerary(start,end)
+    print(route)
 
-    ##Cycle route
+    ##Bike route
     route=BikeItinerary(start,end)
+    print(route)
+
+    #Electric Bike route
+    route=ElectricBikeItinerary(start,end)
     print(route)
 
     ##Car route
