@@ -9,8 +9,11 @@ if __name__ == "__main__":
     start = Point(48.8327878, 2.3380036)
     end = Point(48.8450477, 2.3419488)
 
+    #fact = ItineraryFactory()
     ##foot route
     #route=FootItinerary(start,end)
+    #print(route)
+    #route=fact.generate_route("foot", start, end)
     #print(route)
 
     #googlemaps transit route
