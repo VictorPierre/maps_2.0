@@ -3,6 +3,7 @@ import os
 load_dotenv()
 import requests
 import googlemaps
+from lib.openrouteservice import *
 
 open_route_api_key = os.getenv("OPEN_ROUTE_SERVICE_API_KEY")
 googlemaps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
@@ -20,17 +21,16 @@ class Itinerary:
 class DirectItineray(Itinerary):
     pass
 
+
 class FootItinerary(DirectItineray):
     def __init__(self, start, end):
-
-        params = {'api_key': open_route_api_key, 'start': start.to_LongLat(), 'end': end.to_LongLat()}
-        reponse = requests.get("https://api.openrouteservice.org/v2/directions/foot-walking", params=params)
-        resp = reponse.json()
-        self.duration = resp['features'][0]["properties"]['segments'][0]['duration']
-        self.distance = resp['features'][0]["properties"]['segments'][0]['distance']
+        means_of_transport="foot-walking"
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
 
     def __str__(self):
         return "L'itinéraire piéton mesure {}m et dure {}s".format(self.distance,self.duration)
+
+
 
 class TransitItinerary(DirectItineray):
     def __init__(self, start, end):
