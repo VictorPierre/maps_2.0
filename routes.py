@@ -9,7 +9,7 @@ def index():
     return render_template('index.html')
 
 ##calculate itinerary from form
-@app.route('/foot', methods = ['POST'])
+@app.route('/show', methods = ['POST'])
 def foot_itinerary():
     #Recover start & end points from the form
     start_lat = request.form.get('start_lat', type=float)
@@ -22,4 +22,4 @@ def foot_itinerary():
     end = Point(end_lat, end_long)
     route=FootItinerary(start,end)
 
-    return str(route)
+    return render_template('show.html', route=route)

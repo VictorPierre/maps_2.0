@@ -16,7 +16,6 @@ class Itinerary:
         ##return a distance, duration and geoJSON
         pass
 
-
 ###ITINERAIRES DIRECTS : pas besoin de transiter par une station
 class DirectItineray(Itinerary):
     pass

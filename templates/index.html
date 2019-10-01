@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-   crossorigin=""/>
-     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-   integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-   crossorigin=""></script>
     <meta charset="UTF-8">
     <title>Maps 2.0</title>
 </head>
@@ -15,7 +9,7 @@
 
 
     <h2>Indiquez l'itinéraire souhaité</h2>
-    <form action="/foot" method="post">
+    <form action="/show" method="post">
         <div>
             <label for="name">Lattitude de départ :</label>
             <input type="number" value="8.681495" step="0.000001" min="0" max="10" id="start_lat" name="start_lat">
@@ -35,9 +29,5 @@
         <input type="submit" value="Submit">
     </form>
 
-    <div id="mapid"></div>
 </body>
-
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
-<script src="{{ url_for('static', filename='javascript/map.js') }}"></script>
 </html>
