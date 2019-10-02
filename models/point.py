@@ -14,6 +14,9 @@ class Point:
             self.address = address
             self.lat, self.long = self.get_cor_from_adr()
 
+    def __eq__(self, other):
+        return (self.lat == other.lat) and (self.long == other.long)
+
     def to_LatLong(self):
         return str(self.lat)+','+str(self.long)
 
