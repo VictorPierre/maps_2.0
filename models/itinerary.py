@@ -1,12 +1,12 @@
 from dotenv import load_dotenv
 import os
 load_dotenv()
-import requests
-import googlemaps
+
 import models.point
 from lib.openrouteservice import *
 from lib.bird import *
-googlemaps_api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+from lib.velib import *
+import googlemaps
 
 class ItineraryFactory:
     def generate_route(self, type, start, end):
@@ -59,8 +59,7 @@ class DirectItineray(Itinerary):
 
 class FootItinerary(DirectItineray):
     def __init__(self, start, end):
-        means_of_transport="foot-walking"
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, "foot-walking")
 
     def __str__(self):
         return "L'itinéraire piéton mesure {}m et dure {}s.".format(self.distance,self.duration)
@@ -68,8 +67,7 @@ class FootItinerary(DirectItineray):
 
 class BikeItinerary(DirectItineray):
     def __init__(self, start, end):
-        means_of_transport="cycling-regular"
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, "cycling-regular")
 
     def __str__(self):
         return "L'itinéraire en vélo mesure {}m et dure {}s".format(self.distance,self.duration)
@@ -77,8 +75,7 @@ class BikeItinerary(DirectItineray):
 
 class ElectricBikeItinerary(DirectItineray):
     def __init__(self, start, end):
-        means_of_transport="cycling-electric"
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, "cycling-electric")
 
     def __str__(self):
         return "L'itinéraire en vélo élétrique mesure {}m et dure {}s".format(self.distance,self.duration)
@@ -86,19 +83,14 @@ class ElectricBikeItinerary(DirectItineray):
 
 class CarItinerary(DirectItineray):
     def __init__(self, start, end):
-        means_of_transport="driving-car"
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+        (self.duration,self.distance)= openrouteservice_itinerary(start, end, "driving-car")
 
     def __str__(self):
         return "L'itinéraire en voiture mesure {}m et dure {}s".format(self.distance,self.duration)
 
-
-
-
-
 class TransitItinerary(DirectItineray):
     def __init__(self, start, end):
-        gmaps = googlemaps.Client(key=googlemaps_api_key)
+        gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_API_KEY"))
         # Request directions via public transit (GoogleMaps)
         directions_result = gmaps.directions(start.to_LatLong(), end.to_LatLong(), mode="transit")
         self.duration = directions_result[0]['legs'][0]['duration']['value']
@@ -106,8 +98,6 @@ class TransitItinerary(DirectItineray):
 
     def __str__(self):
         return "L'itinéraire en transports mesure {}m et dure {}s".format(self.distance,self.duration)
-
-
 
 ###ITINERAIRES INDIRECTS : passe par des stations (vélib, autolib, Lime....)
 class IndirectItinerary(Itinerary):
@@ -122,17 +112,9 @@ class IndirectItinerary(Itinerary):
 
 class VelibItinerary(IndirectItinerary):
     def GiveStations(self, start, end):
-        stationA = self.Station_plus_proche(start)
-        stationB = self.Station_plus_proche(end)
-        return stationA, stationB
-
-    def Station_plus_proche(self, depart) :
-        reponse = requests.get('https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&exclude.nbbike=0&geofilter.distance=' + str(depart.lat)+'%2C+' + str(depart.long) +'%2C+1000')
-        resp = reponse.json()
-        lat = resp['records'][0]['fields']['geo'][0]
-        long = resp['records'][0]['fields']['geo'][1]
-        Station = models.Point(lat, long)
-        return Station
+        latA, longA = closest_velib_station(start.lat, start.long)
+        latB, longB = closest_velib_station(end.lat, end.long)
+        return models.Point(latA, longA), models.Point(latB, longB)
 
     def __init__(self, start, end):
         super().__init__(start, end, "bike")

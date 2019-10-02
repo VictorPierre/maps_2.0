@@ -27,5 +27,3 @@ def bird_cost(duration):
 #to do : recuperer la trotinette optimale et pas la plus proche
 #estimation du prix
 # estimation vitesse : 15km/h
-
-print(bird_cost(5))
