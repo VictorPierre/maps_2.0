@@ -12,9 +12,13 @@
 </head>
 <body>
     <h1>Hello, voici ton itinéraire</h1>
-    {{route.distance}}
+    {{route}}
     <div id="mapid"></div>
 </body>
+<script>
+    var geojsonFeature = JSON.parse('{{ geojson | tojson | safe}}');
+    console.log(geojsonFeature)
+</script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/show.css') }}">
 <script src="{{ url_for('static', filename='javascript/map.js') }}"></script>
 </html>

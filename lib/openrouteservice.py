@@ -10,5 +10,6 @@ def openrouteservice_itinerary(start, end, means_of_transport,open_route_api_key
     resp = reponse.json()
     duration = resp['features'][0]["properties"]['segments'][0]['duration']
     distance = resp['features'][0]["properties"]['segments'][0]['distance']
-    return(duration,distance)
+    geojson = resp['features'][0]
+    return(duration,distance,geojson)
 

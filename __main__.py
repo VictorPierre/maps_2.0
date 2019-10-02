@@ -11,27 +11,27 @@ if __name__ == "__main__":
     end = Point(48.8450477, 2.3419488)
     fact = ItineraryFactory()
 
-
-    route=fact.generate_route("velib", start, end)
-    print(route)
+    print(ItineraryFactory.available_types())
+    #route=fact.generate_route("velib", start, end)
+    #print(route)
 
 
     ##foot route
-    route=fact.generate_route("foot", start, end)
+    #route=fact.generate_route("foot", start, end)
     #route=FootItinerary(start,end)
-    print(route)
+    #print(route)
 
     ##Bike routeq
-    route = fact.generate_route("bike", start, end)
-    print(route)
+    #route = fact.generate_route("bike", start, end)
+    #print(route)
 
     #Electric Bike route
-    route = fact.generate_route("electric_bike", start, end)
-    print(route)
+    #route = fact.generate_route("electric_bike", start, end)
+    #print(route)
 
     ##Car route
-    route = fact.generate_route("car", start, end)
-    print(route)
+    #route = fact.generate_route("car", start, end)
+    #print(route)
 
     #googlemaps transit route
     #route=TransitItinerary(start,end)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     #print(route)
 
     ##Launch web app
-    #app.run()
+    app.run()
 
 
 

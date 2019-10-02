@@ -6,7 +6,9 @@ app = Flask(__name__)
 ##Index page
 @app.route('/')
 def index():
-    return render_template('index.html')
+    data = {'available_types': ItineraryFactory.available_types()
+            }
+    return render_template('index.html', data=data)
 
 ##calculate itinerary from form
 @app.route('/show', methods = ['POST'])
@@ -16,10 +18,12 @@ def foot_itinerary():
     start_long = request.form.get('start_long', type=float)
     end_lat = request.form.get('end_lat', type=float)
     end_long = request.form.get('end_long', type=float)
+    type = request.form.get('transport')
 
     #Calculate the best itinerary
     start = Point(start_lat, start_long)
     end = Point(end_lat, end_long)
-    route=FootItinerary(start,end)
+    fact = ItineraryFactory()
+    route = fact.generate_route(type, start, end)
 
-    return render_template('show.html', route=route)
+    return render_template('show.html', route=route, geojson=route.geojson)

@@ -9,7 +9,7 @@ class Point:
         if address is None:
             self.lat = lat
             self.long = long
-            self.address = self.get_adr_from_cor()
+            #self.address = self.get_adr_from_cor()
         else:
             self.address = address
             self.lat, self.long = self.get_cor_from_adr()

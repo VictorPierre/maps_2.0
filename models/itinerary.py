@@ -14,6 +14,16 @@ class ItineraryFactory:
         return generator(start, end)
 
     @classmethod
+    def available_types(cls):
+        return [("foot", "marche"),
+                ("bike", "vélo"),
+                ("electric_bike", "vélo électrique"),
+                ("velib", "Vélib"),
+                ("transit", "transports en commun"),
+                ("car", "voiture")
+                ]
+
+    @classmethod
     def get_generator(cls, type):
         if type == 'foot':
             return FootItinerary
@@ -28,7 +38,7 @@ class ItineraryFactory:
         elif type == 'car':
             return CarItinerary
         else:
-            raise ValueError('Moyen de transport inconnu')
+            raise ValueError('Moyen de transport inconnu : '+type)
 
 
 class Itinerary:
@@ -47,10 +57,10 @@ class DirectItineray(Itinerary):
 class FootItinerary(DirectItineray):
     def __init__(self, start, end):
         means_of_transport="foot-walking"
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, means_of_transport)
+        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, means_of_transport)
 
     def __str__(self):
-        return "L'itinéraire piéton mesure {}m et dure {}s".format(self.distance,self.duration)
+        return "L'itinéraire piéton mesure {}m et dure {}s. GEOJSON: {}".format(self.distance,self.duration, self.geojson)
 
 
 class BikeItinerary(DirectItineray):
