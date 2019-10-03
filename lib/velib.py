@@ -1,3 +1,5 @@
+from math import ceil
+
 import requests
 from lib.API_Exception import *
 
@@ -14,5 +16,8 @@ def closest_velib_station(lat,long):
     station_lat = resp['records'][0]['fields']['geo'][0]
     station_long = resp['records'][0]['fields']['geo'][1]
     return station_lat, station_long
+
+def velib_cost(duration):
+    return 1*ceil(duration / 60)
 
 

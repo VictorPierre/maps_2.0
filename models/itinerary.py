@@ -118,6 +118,7 @@ class VelibItinerary(IndirectItinerary):
 
     def __init__(self, start, end):
         super().__init__(start, end, "bike")
+        self.cost = velib_cost(self.duration)
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routeA)
