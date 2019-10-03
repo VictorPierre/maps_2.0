@@ -19,9 +19,9 @@ def bird_find_scooter(lat,long):
     resp = response.json()
 
     if response.status_code != 200:
-        raise Exception('API Vélib ne répond pas')
+        raise ApiException('API Vélib ne répond pas')
     if len(resp['birds']) == 0 :
-        raise Exception
+        raise ValueError('Pas de bird trouvé dans la zone')
     scooter_location = resp['birds'][0]["location"]
     return(scooter_location['latitude'],scooter_location['longitude'])
 

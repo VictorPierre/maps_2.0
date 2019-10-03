@@ -26,4 +26,4 @@ def foot_itinerary():
     fact = ItineraryFactory()
     route = fact.generate_route(type, start, end)
 
-    return render_template('show.html', route=route, geojson=route.geojson)
+    return render_template('show.html', route=route, geojson="route.geojson")

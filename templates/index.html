@@ -6,25 +6,21 @@
 </head>
 <body>
     <h1>Bienvenue dans Maps 2.0 !</h1>
-
-
     <h2>Indiquez l'itinéraire souhaité</h2>
+    <input type="search" id="depart" placeholder="Where are we now?" />
+    <input type="search" id="arrivee" placeholder="Where are we going?" />
     <form action="/show" method="post">
         <div>
-            <label for="name">Lattitude de départ :</label>
-            <input type="number" value="48.8327878" step="0.0000001" min="0" max="50" id="start_lat" name="start_lat">
+            <input type="hidden" value="48.8327878" step="0.0000001" min="0" max="50" id="start_lat" name="start_lat">
         </div>
         <div>
-            <label for="name">Longitude de départ :</label>
-            <input type="number" value="2.3380036" step="0.0000001" min="0" max="50" id="start_long" name="start_long">
+            <input type="hidden" value="2.3380036" step="0.0000001" min="0" max="50" id="start_long" name="start_long">
         </div>
         <div>
-            <label for="name">Lattitude d'arrivée :</label>
-            <input type="number" value="48.8450477" step="0.0000001" min="0" max="50" id="end_lat" name="end_lat">
+            <input type="hidden" value="48.8450477" step="0.0000001" min="0" max="50" id="end_lat" name="end_lat">
         </div>
         <div>
-            <label for="name">Longitude d'arrivée :</label>
-            <input type="number" value="2.3419488" step="0.0000001" min="00" max="50" id="end_long" name="end_long">
+            <input type="hidden" value="2.3419488" step="0.0000001" min="00" max="50" id="end_long" name="end_long">
         </div>
 
         <div>
@@ -39,4 +35,12 @@
     </form>
 
 </body>
+<script
+ src="https://code.jquery.com/jquery-3.4.1.min.js"
+ integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+ crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/places.js@1.16.5"></script>
+<script src = "{{ url_for('static', filename='javascript/index.js') }}"> </script>
+
+
 </html>
