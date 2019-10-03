@@ -3,6 +3,7 @@ import os
 load_dotenv()
 import requests
 from math import ceil
+import lib.API_Exception
 
 def bird_find_scooter(lat,long):
     url = "https://api.birdapp.com/bird/nearby"
@@ -16,6 +17,11 @@ def bird_find_scooter(lat,long):
     }
     response = requests.get(url, headers=headers, params=params)
     resp = response.json()
+
+    if response.status_code != 200:
+        raise Exception('API Vélib ne répond pas')
+    if len(resp['birds']) == 0 :
+        raise Exception
     scooter_location = resp['birds'][0]["location"]
     return(scooter_location['latitude'],scooter_location['longitude'])
 
