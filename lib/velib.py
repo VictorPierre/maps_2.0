@@ -15,5 +15,3 @@ def closest_velib_station(lat,long):
     station_long = resp['records'][0]['fields']['geo'][1]
     return station_lat, station_long
 
-closest_velib_station(1,2)
-
