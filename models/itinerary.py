@@ -133,7 +133,8 @@ class BirdItinerary(IndirectItinerary):
 
     def __init__(self, start, end):
         ## to do : change speed (scooter is slower than a bike)
-        super().__init__(start, end, "bike")
+        try :
+            super().__init__(start, end, "bike")
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routeA)

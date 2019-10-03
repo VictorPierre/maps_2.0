@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 import requests
+import lib.API_Exception
 
 def openrouteservice_itinerary(start, end, means_of_transport,open_route_api_key=os.getenv("OPEN_ROUTE_SERVICE_API_KEY")):
     duration, distance = 0, 0
