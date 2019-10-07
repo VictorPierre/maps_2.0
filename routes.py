@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, json
 from models import *
 
 app = Flask(__name__)
@@ -11,8 +11,8 @@ def index():
     return render_template('index.html', data=data)
 
 ##calculate itinerary from form
-@app.route('/show', methods = ['POST'])
-def foot_itinerary():
+@app.route('/', methods = ['POST'])
+def calculate_itinerary():
     #Recover start & end points from the form
     start_lat = request.form.get('start_lat', type=float)
     start_long = request.form.get('start_long', type=float)
@@ -26,5 +26,6 @@ def foot_itinerary():
     fact = ItineraryFactory()
     route = fact.generate_route(type, start, end)
 
-    return render_template('show.html', route=route, geojson="route.geojson") ##TO DO
+    return json.jsonify(route.to_json())
+    #return render_template('show.html', route=route, geojson=route.geojson)
 

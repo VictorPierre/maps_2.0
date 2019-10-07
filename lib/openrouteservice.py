@@ -5,7 +5,7 @@ import requests
 from lib.API_Exception import *
 
 def openrouteservice_itinerary(start, end, means_of_transport,open_route_api_key=os.getenv("OPEN_ROUTE_SERVICE_API_KEY")):
-    duration, distance = 0, 0
+    duration, distance, geojson = 0, 0, {}
     ##Call the API only if the start and end are 2 different points
     if not start == end:
         ##API CALL
@@ -20,6 +20,6 @@ def openrouteservice_itinerary(start, end, means_of_transport,open_route_api_key
         duration = resp['features'][0]["properties"]['segments'][0]['duration']
         distance = resp['features'][0]["properties"]['segments'][0]['distance']
         geojson = resp['features'][0]
-    return duration, distance
+    return duration, distance, geojson
 
 

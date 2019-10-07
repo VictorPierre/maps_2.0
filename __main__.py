@@ -7,9 +7,9 @@ from routes import *
 if __name__ == "__main__":
 
     print('Bienvenue dans Maps 2.0')
-    start = Point(48.8327878, 2.3380036)
-    end = Point(48.8450477, 2.3419488)
-    fact = ItineraryFactory()
+    #start = Point(48.8327878, 2.3380036)
+    #end = Point(48.8450477, 2.3419488)
+    #fact = ItineraryFactory()
     #
     # print(ItineraryFactory.available_types())
     #
@@ -31,8 +31,8 @@ if __name__ == "__main__":
     # #print(route)
     #
     # ##Velib route
-    route=fact.generate_route("velib", start, end)
-    print(route)
+    #route=fact.generate_route("velib", start, end)
+    #print(route)
     #
     # ##Bird scooter route
     # route=fact.generate_route("bird", start, end)

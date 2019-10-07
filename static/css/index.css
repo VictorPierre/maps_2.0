@@ -1,0 +1,22 @@
+body{
+    margin: 0px;
+}
+.container{
+    display: flex;
+}
+
+#mapid{
+    height: 100vh;
+    width: 70%;
+}
+
+.left_menu{
+    height: 100%;
+    width: 30%;
+    min-width: 350px;
+    padding: 20px;
+}
+
+h1, p, span{
+    font-family: "Circular, Helvetica, Sans-serif, Arial Fonts"
+}

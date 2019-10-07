@@ -52,6 +52,16 @@ class Itinerary:
         ##return a distance, duration and geoJSON
         pass
 
+    def to_json(self):
+        json = {
+            "duration": self.duration,
+            "distance": self.distance,
+            "html": self.__str__(),
+        }
+        if hasattr(self, 'geojson'):
+            json["geojson"]= self.geojson
+
+        return json
 ###ITINERAIRES DIRECTS : pas besoin de transiter par une station
 class DirectItineray(Itinerary):
     pass
@@ -59,7 +69,7 @@ class DirectItineray(Itinerary):
 
 class FootItinerary(DirectItineray):
     def __init__(self, start, end):
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, "foot-walking")
+        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "foot-walking")
 
     def __str__(self):
         return "L'itinéraire piéton mesure {}m et dure {}s.".format(self.distance,self.duration)
@@ -67,7 +77,7 @@ class FootItinerary(DirectItineray):
 
 class BikeItinerary(DirectItineray):
     def __init__(self, start, end):
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, "cycling-regular")
+        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-regular")
 
     def __str__(self):
         return "L'itinéraire en vélo mesure {}m et dure {}s".format(self.distance,self.duration)
@@ -75,7 +85,7 @@ class BikeItinerary(DirectItineray):
 
 class ElectricBikeItinerary(DirectItineray):
     def __init__(self, start, end):
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, "cycling-electric")
+        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-electric")
 
     def __str__(self):
         return "L'itinéraire en vélo élétrique mesure {}m et dure {}s".format(self.distance,self.duration)
@@ -83,7 +93,7 @@ class ElectricBikeItinerary(DirectItineray):
 
 class CarItinerary(DirectItineray):
     def __init__(self, start, end):
-        (self.duration,self.distance)= openrouteservice_itinerary(start, end, "driving-car")
+        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "driving-car")
 
     def __str__(self):
         return "L'itinéraire en voiture mesure {}m et dure {}s".format(self.distance,self.duration)
