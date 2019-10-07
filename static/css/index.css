@@ -1,3 +1,7 @@
+html{
+    font-family: Circular, Helvetica, Sans-serif, Arial Fonts
+}
+
 body{
     margin: 0px;
 }
@@ -11,12 +15,12 @@ body{
 }
 
 .left_menu{
-    height: 100%;
+    height: 100vh;
     width: 30%;
     min-width: 350px;
     padding: 20px;
+    background-color: darkgrey;
+    color: white;
 }
 
-h1, p, span{
-    font-family: "Circular, Helvetica, Sans-serif, Arial Fonts"
-}
+

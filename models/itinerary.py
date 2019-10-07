@@ -118,6 +118,7 @@ class IndirectItinerary(Itinerary):
         self.routeA = FootItinerary(start,stationA)
         self.routeB = fact.generate_route(type,stationA, stationB)
         self.routeC = FootItinerary(stationB,end)
+        self.distance = self.routeA.distance + self.routeB.distance + self.routeC.distance
         self.duration = self.routeA.duration + self.routeB.duration + self.routeC.duration
 
 class VelibItinerary(IndirectItinerary):
