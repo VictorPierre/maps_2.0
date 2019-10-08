@@ -88,39 +88,34 @@ class Itinerary:
         pass
 ###ITINERAIRES DIRECTS : pas besoin de transiter par une station
 class DirectItineray(Itinerary):
-    pass
+    def __init__(self, start, end):
+        super().__init__(self, start, end)
+
+    def __str__(self):
+        return "L'itinéraire {} mesure {}m et dure {}s.".format(self.itinerary_name,self.distance, self.duration)
 
 
 class FootItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "foot-walking")
-
-    def __str__(self):
-        return "L'itinéraire piéton mesure {}m et dure {}s.".format(self.distance,self.duration)
+        self.itinerary_name="à pied"
 
 
 class BikeItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-regular")
-
-    def __str__(self):
-        return "L'itinéraire en vélo mesure {}m et dure {}s".format(self.distance,self.duration)
-
+        self.itinerary_name = "en vélo"
 
 class ElectricBikeItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-electric")
-
-    def __str__(self):
-        return "L'itinéraire en vélo élétrique mesure {}m et dure {}s".format(self.distance,self.duration)
-
+        self.itinerary_name = "en vélo éléctrique"
 
 class CarItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "driving-car")
+        self.itinerary_name = "en voiture"
 
-    def __str__(self):
-        return "L'itinéraire en voiture mesure {}m et dure {}s".format(self.distance,self.duration)
 
 class TransitItinerary(DirectItineray):
     def __init__(self, start, end):
@@ -130,8 +125,8 @@ class TransitItinerary(DirectItineray):
         self.duration = directions_result[0]['legs'][0]['duration']['value']
         self.distance = directions_result[0]['legs'][0]['distance']['value']
 
-    def __str__(self):
-        return "L'itinéraire en transports mesure {}m et dure {}s".format(self.distance,self.duration)
+        self.itinerary_name = "en transports en commun"
+
 
 ###ITINERAIRES INDIRECTS : passe par des stations (vélib, autolib, Lime....)
 class IndirectItinerary(Itinerary):
@@ -168,7 +163,7 @@ class BirdItinerary(IndirectItinerary):
     def __init__(self, start, end):
         scooter = self.FindScooter(start)
         fact = ItineraryFactory()
-        self.routes = [FootItinerary(start,scooter), fact.generate_route("bike", scooter, end)]
+        self.routes = [FootItinerary(start,scooter), fact.generate_route("electric_bike", scooter, end)]
         ## to do : change speed (scooter is slower than a bike)
         super().__init__(start, end)
 
