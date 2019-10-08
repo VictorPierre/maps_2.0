@@ -23,3 +23,24 @@ def openrouteservice_itinerary(start, end, means_of_transport,open_route_api_key
     return duration, distance, geojson
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
