@@ -46,6 +46,12 @@ class ItineraryFactory:
 
 class Itinerary:
     def __init__(self, start, end):
+        self.cost_per_km=10 #Très conservatif en cas de manque d'information
+        self.fixed_cost=5 #Très conservatif en cas de manque d'information
+        self.C02_per_km=0 #Si on n'a pas d'information on va partir du principe que la production de C02 est faible (transport en commun, etc...)
+        self.calories_per_hour=0 #Si on a pas d'information on va partir du principe que cela n'est pas une activité sportive
+        self.rain_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter en cas de pluie
+        self.disability_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
         pass
 
 
@@ -63,22 +69,22 @@ class Itinerary:
             json["geojson"]= self.geojson
         return json
 
-
-        self.cost_per_km=0
-        self.fixed_cost=0
-
-
     def budget(self):
         self.total_cost = float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
         pass
 
     def carbon_emission(self):
+        self.total_C02= float(self.distance)*float(self.C02_per_km)
         pass
 
     def calories(self):
+        self.total_calories= float(self.calories_per_hour)*float(self.duration)/3600
         pass
 
     def rain_compatible(self):
+        pass
+
+    def disability_compatible(self):
         pass
 ###ITINERAIRES DIRECTS : pas besoin de transiter par une station
 class DirectItineray(Itinerary):
