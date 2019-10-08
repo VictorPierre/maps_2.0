@@ -69,7 +69,7 @@ class Itinerary:
 
 
     def budget(self):
-        self.total_ float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
+        self.total_cost = float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
         pass
 
     def carbon_emission(self):
@@ -133,12 +133,12 @@ class IndirectItinerary(Itinerary):
     def __init__(self , start, end, type):
         (stationA, stationB) = self.GiveStations(start, end)
         fact = ItineraryFactory()
-        self.routeA = FootItinerary(start,stationA)
-        self.routeB = fact.generate_route(type,stationA, stationB)
-        self.routeC = FootItinerary(stationB,end)
-        self.distance = self.routeA.distance + self.routeB.distance + self.routeC.distance
+        self.routes = [FootItinerary(start,stationA), fact.generate_route(type,stationA, stationB), FootItinerary(stationB,end)]
+        self.distance = sum([route.distance for route in self.routes])
+        self.duration = sum([route.duration for route in self.routes])
+"""        self.distance = [self.routes[0].distance,]#self.routeA.distance + self.routeB.distance + self.routeC.distance
         self.duration = self.routeA.duration + self.routeB.duration + self.routeC.duration
-
+"""
 class VelibItinerary(IndirectItinerary):
     def GiveStations(self, start, end):
         latA, longA = closest_velib_station(start.lat, start.long)
@@ -150,9 +150,9 @@ class VelibItinerary(IndirectItinerary):
         self.cost = velib_cost(self.duration)
 
     def __str__(self):
-        Aff = "Première étape:" + str(self.routeA)
-        Aff += "\nDeuxième étape :" + str(self.routeB)
-        Aff += "\nTroisième étape:" + str(self.routeC)
+        Aff = "Première étape:" + str(self.routes[0])
+        Aff += "\nDeuxième étape :" + str(self.routes[1])
+        Aff += "\nTroisième étape:" + str(self.routes[2])
         Aff += ". Le trajet total dure" + str(self.duration) + "s"
         return Aff
 
