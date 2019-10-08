@@ -14,9 +14,9 @@ if __name__ == "__main__":
     # print(ItineraryFactory.available_types())
     #
     # ##foot route
-    # #route=fact.generate_route("foot", start, end)
-    # route=FootItinerary(start,end)
-    # print(route)
+    #route=fact.generate_route("foot", start, end)
+    #route=FootItinerary(start,end)
+    #print(route)
     #
     # ##Bike routeq
     # route = fact.generate_route("bike", start, end)

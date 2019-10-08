@@ -48,6 +48,7 @@ class Itinerary:
     def __init__(self, start, end):
         pass
 
+
     def route(start, end):
         ##return a distance, duration and geoJSON
         pass
@@ -60,8 +61,25 @@ class Itinerary:
         }
         if hasattr(self, 'geojson'):
             json["geojson"]= self.geojson
-
         return json
+
+
+        self.cost_per_km=0
+        self.fixed_cost=0
+
+
+    def budget(self):
+        self.total_ float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
+        pass
+
+    def carbon_emission(self):
+        pass
+
+    def calories(self):
+        pass
+
+    def rain_compatible(self):
+        pass
 ###ITINERAIRES DIRECTS : pas besoin de transiter par une station
 class DirectItineray(Itinerary):
     pass
