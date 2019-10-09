@@ -47,6 +47,12 @@ class ItineraryFactory:
 
 class Itinerary:
     def __init__(self, start, end):
+        self.cost_per_km=10 #Très conservatif en cas de manque d'information
+        self.fixed_cost=5 #Très conservatif en cas de manque d'information
+        self.C02_per_km=0 #Si on n'a pas d'information on va partir du principe que la production de C02 est faible (transport en commun, etc...)
+        self.calories_per_hour=0 #Si on a pas d'information on va partir du principe que cela n'est pas une activité sportive
+        self.rain_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter en cas de pluie
+        self.disability_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
         pass
 
 
@@ -64,34 +70,37 @@ class Itinerary:
             json["geojson"]= self.geojson
         return json
 
-
-        self.cost_per_km=0
-        self.fixed_cost=0
-
-
     def budget(self):
         self.total_cost = float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
         pass
 
     def carbon_emission(self):
+        self.total_C02= float(self.distance)*float(self.C02_per_km)
         pass
 
     def calories(self):
+        self.total_calories= float(self.calories_per_hour)*float(self.duration)/3600
         pass
 
     def rain_compatible(self):
         pass
+
+    def disability_compatible(self):
+        pass
+
 ###ITINERAIRES DIRECTS : pas besoin de transiter par une station
 class DirectItineray(Itinerary):
-    pass
+    def __init__(self, start, end):
+        super().__init__(self, start, end)
+
+    def __str__(self):
+        return "L'itinéraire {} mesure {}m et dure {}s.".format(self.itinerary_name,self.distance, self.duration)
 
 
 class FootItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "foot-walking")
-
-    def __str__(self):
-        return "L'itinéraire piéton mesure {}m et dure {}s.".format(self.distance,self.duration)
+        self.itinerary_name="à pied"
 
 
 class BikeItinerary(DirectItineray):
@@ -99,34 +108,26 @@ class BikeItinerary(DirectItineray):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-regular")
         ##Green color for the geojson
         self.geojson["properties"]["color"]="#026928"
-
-    def __str__(self):
-        return "L'itinéraire en vélo mesure {}m et dure {}s".format(self.distance,self.duration)
-
+        self.itinerary_name = "en vélo"
 
 class ElectricBikeItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-electric")
         ##Red color for the geojson
         self.geojson["properties"]["color"]="#AA0115"
-
-    def __str__(self):
-        return "L'itinéraire en vélo élétrique mesure {}m et dure {}s".format(self.distance,self.duration)
-
+        self.itinerary_name = "en vélo éléctrique"
 
 class CarItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "driving-car")
+        self.itinerary_name = "en voiture"
 
-    def __str__(self):
-        return "L'itinéraire en voiture mesure {}m et dure {}s".format(self.distance,self.duration)
 
 class TransitItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration, self.distance, self.geojson) = gmaps_transit_itinerary(start, end)
+        self.itinerary_name = "en transports en commun"
 
-    def __str__(self):
-        return "L'itinéraire en transports mesure {}m et dure {}s".format(self.distance,self.duration)
 
 ###ITINERAIRES INDIRECTS : passe par des stations (vélib, autolib, Lime....)
 class IndirectItinerary(Itinerary):
