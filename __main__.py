@@ -44,4 +44,4 @@ if __name__ == "__main__":
     # #print(route)
     #
     # ##Launch web app
-    app.run()
+    app.run(debug=True)

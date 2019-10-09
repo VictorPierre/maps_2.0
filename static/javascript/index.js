@@ -41,6 +41,7 @@ $( document ).ready(function() {
             data: form.serialize(), // serializes the form's elements.
             success : function(response, status){
                 $("#results").html(response["html"])
+                resetMap()
                 showGeoJSON(response["geojson"])
             },
             error : function(response, status, error){
@@ -51,19 +52,29 @@ $( document ).ready(function() {
 });
 
 var map = L.map('mapid').setView([48.84, 2.34], 13);
-L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+
+tile = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
 	maxZoom: 18,
 }).addTo(map);
 
-var myStyle = {
-	"color": "#ff7800",
-	"weight": 5,
-	"opacity": 0.65
-};
 
 var showGeoJSON = function(geojson){
     L.geoJSON(geojson, {
-        style: myStyle
+        style: function(feature) {
+            return {
+                "color": feature.properties.color || "#000000",
+                "weight": 5,
+                "opacity": 1
+            };
+        }
     }).addTo(map);
+}
+
+var resetMap = function () {
+    map.eachLayer(function(layer){
+        if(layer._leaflet_id!=tile["_leaflet_id"]){
+            map.removeLayer(layer);
+        }
+    });
 }

@@ -6,7 +6,8 @@ import models.point
 from lib.openrouteservice import *
 from lib.bird import *
 from lib.velib import *
-import googlemaps
+from lib.gmaps_to_geojson import *
+
 
 class ItineraryFactory:
     def generate_route(self, type, start, end):
@@ -96,6 +97,8 @@ class FootItinerary(DirectItineray):
 class BikeItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-regular")
+        ##Green color for the geojson
+        self.geojson["properties"]["color"]="#026928"
 
     def __str__(self):
         return "L'itinéraire en vélo mesure {}m et dure {}s".format(self.distance,self.duration)
@@ -104,6 +107,8 @@ class BikeItinerary(DirectItineray):
 class ElectricBikeItinerary(DirectItineray):
     def __init__(self, start, end):
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-electric")
+        ##Red color for the geojson
+        self.geojson["properties"]["color"]="#AA0115"
 
     def __str__(self):
         return "L'itinéraire en vélo élétrique mesure {}m et dure {}s".format(self.distance,self.duration)
@@ -118,11 +123,7 @@ class CarItinerary(DirectItineray):
 
 class TransitItinerary(DirectItineray):
     def __init__(self, start, end):
-        gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_API_KEY"))
-        # Request directions via public transit (GoogleMaps)
-        directions_result = gmaps.directions(start.to_LatLong(), end.to_LatLong(), mode="transit")
-        self.duration = directions_result[0]['legs'][0]['duration']['value']
-        self.distance = directions_result[0]['legs'][0]['distance']['value']
+        (self.duration, self.distance, self.geojson) = gmaps_transit_itinerary(start, end)
 
     def __str__(self):
         return "L'itinéraire en transports mesure {}m et dure {}s".format(self.distance,self.duration)
@@ -133,6 +134,7 @@ class IndirectItinerary(Itinerary):
     def __init__(self , start, end):
         self.distance = sum([route.distance for route in self.routes])
         self.duration = sum([route.duration for route in self.routes])
+        self.geojson = [route.geojson for route in self.routes]
 
 class VelibItinerary(IndirectItinerary):
     def GiveStations(self, start, end):
@@ -162,7 +164,7 @@ class BirdItinerary(IndirectItinerary):
     def __init__(self, start, end):
         scooter = self.FindScooter(start)
         fact = ItineraryFactory()
-        self.routes = [FootItinerary(start,scooter), fact.generate_route("bike", scooter, end)]
+        self.routes = [FootItinerary(start,scooter), fact.generate_route("electric_bike", scooter, end)]
         ## to do : change speed (scooter is slower than a bike)
         super().__init__(start, end)
 
