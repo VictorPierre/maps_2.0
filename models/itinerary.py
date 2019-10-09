@@ -21,7 +21,8 @@ class ItineraryFactory:
                 ("velib", "Vélib"),
                 ("transit", "transports en commun"),
                 ("car", "voiture"),
-                ("bird", "Bird")
+                ("bird", "Bird"),
+                ("e-velib","Vélib électrique")
                 ]
 
     @classmethod
@@ -34,6 +35,8 @@ class ItineraryFactory:
             return ElectricBikeItinerary
         elif type == 'velib':
             return VelibItinerary
+        elif type == 'e-velib':
+            return eVelibItinerary
         elif type == 'transit':
             return TransitItinerary
         elif type == 'car':
@@ -130,15 +133,10 @@ class TransitItinerary(DirectItineray):
 ###ITINERAIRES INDIRECTS : passe par des stations (vélib, autolib, Lime....)
 class IndirectItinerary(Itinerary):
     ##Fonction qui relie des points avec des stations
-    def __init__(self , start, end, type):
-        (stationA, stationB) = self.GiveStations(start, end)
-        fact = ItineraryFactory()
-        self.routes = [FootItinerary(start,stationA), fact.generate_route(type,stationA, stationB), FootItinerary(stationB,end)]
+    def __init__(self , start, end):
         self.distance = sum([route.distance for route in self.routes])
         self.duration = sum([route.duration for route in self.routes])
-"""        self.distance = [self.routes[0].distance,]#self.routeA.distance + self.routeB.distance + self.routeC.distance
-        self.duration = self.routeA.duration + self.routeB.duration + self.routeC.duration
-"""
+
 class VelibItinerary(IndirectItinerary):
     def GiveStations(self, start, end):
         latA, longA = closest_velib_station(start.lat, start.long)
@@ -146,7 +144,10 @@ class VelibItinerary(IndirectItinerary):
         return models.Point(latA, longA), models.Point(latB, longB)
 
     def __init__(self, start, end):
-        super().__init__(start, end, "bike")
+        (stationA, stationB) = self.GiveStations(start, end)
+        fact = ItineraryFactory()
+        self.routes = [FootItinerary(start,stationA), fact.generate_route("bike",stationA, stationB), FootItinerary(stationB,end)]
+        super().__init__(start, end)
         self.cost = velib_cost(self.duration)
 
     def __str__(self):
@@ -156,15 +157,19 @@ class VelibItinerary(IndirectItinerary):
         Aff += ". Le trajet total dure" + str(self.duration) + "s"
         return Aff
 
-class VelibItinerary(IndirectItinerary):
+class eVelibItinerary(IndirectItinerary):
     def GiveStations(self, start, end):
-        latA, longA = closest_velib_station(start.lat, start.long)
-        latB, longB = closest_velib_station(end.lat, end.long)
+        latA, longA = closest_evelib_station(start.lat, start.long)
+        latB, longB = closest_evelib_station(end.lat, end.long)
         return models.Point(latA, longA), models.Point(latB, longB)
 
     def __init__(self, start, end):
-        super().__init__(start, end, "bike")
-        self.cost = velib_cost(self.duration)
+        (stationA, stationB) = self.GiveStations(start, end)
+        fact = ItineraryFactory()
+        self.routes = [FootItinerary(start, stationA), fact.generate_route("electric_bike", stationA, stationB),
+                       FootItinerary(stationB, end)]
+        super().__init__(start, end)
+        self.cost = evelib_cost(self.duration)
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routes[0])
@@ -172,20 +177,21 @@ class VelibItinerary(IndirectItinerary):
         Aff += "\nTroisième étape:" + str(self.routes[2])
         Aff += ". Le trajet total dure" + str(self.duration) + "s"
         return Aff
-
 
 class BirdItinerary(IndirectItinerary):
-    def GiveStations(self, start, end):
+    def FindScooter(self, start):
         scooter_lat, scooter_long = bird_find_scooter(start.lat, start.long)
-        return models.Point(scooter_lat, scooter_long), end
+        return models.Point(scooter_lat, scooter_long)
 
     def __init__(self, start, end):
+        scooter = self.FindScooter(start)
+        fact = ItineraryFactory()
+        self.routes = [FootItinerary(start,scooter), fact.generate_route("bike", scooter, end)]
         ## to do : change speed (scooter is slower than a bike)
-        super().__init__(start, end, "bike")
+        super().__init__(start, end)
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routes[0])
         Aff += "\nDeuxième étape :" + str(self.routes[1])
-        Aff += "\nTroisième étape:" + str(self.routes[2])
         Aff += ". Le trajet total dure" + str(self.duration) + "s"
         return Aff
