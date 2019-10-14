@@ -30,7 +30,7 @@ $( document ).ready(function() {
        document.querySelector('#end_long').value = e.suggestion.latlng['lng'] || '';
     });
 
-    // this is the id of the form
+    //Form submission
     $("#form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
@@ -40,26 +40,55 @@ $( document ).ready(function() {
             url: url,
             data: form.serialize(), // serializes the form's elements.
             success : function(response, status){
-                $("#results").html(response["html"])
-                resetMap()
-                showGeoJSON(response["geojson"])
+                routes = response
+                displayRoutes(routes)
             },
             error : function(response, status, error){
-                $("#results").html(response)
+                $("#routes").html(response)
             }
         });
     });
 });
 
-var map = L.map('mapid').setView([48.84, 2.34], 13);
+var routes;
 
+//Map initialisation
+var map = L.map('mapid').setView([48.84, 2.34], 13);
 tile = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
 	maxZoom: 18,
 }).addTo(map);
 
 
+var displayRoutes = function (routes) {
+    $("#routes").empty()
+    //display the distance & duration for all routes
+    for (var i = 0; i < routes.length; i++) {
+        //append the route
+        $("#routes").append(routes[i]["html"])
+        //create route id
+        $("#routes .itinerary:last-child").attr('routeId', i)
+    }
+    highlightRoute(0);
+    $(".itinerary").on('click', function(){
+        routeId = parseInt($(this).attr("routeId"));
+        highlightRoute(routeId)
+    })
+}
+
+var highlightRoute = function(route_id){
+    //Show the geojson of the route
+    showGeoJSON(routes[route_id]["geojson"])
+    //Add the highlighted attribute to the div
+    $("#routes .itinerary").removeAttr('highlighted')
+    $("#routes .itinerary:nth-child("+(route_id+1)+")").attr('highlighted', '')
+
+}
+
 var showGeoJSON = function(geojson){
+    //Reset the map
+    resetMap();
+    //display the geojson
     L.geoJSON(geojson, {
         style: function(feature) {
             return {

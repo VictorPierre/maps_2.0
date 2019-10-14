@@ -24,4 +24,41 @@ body{
     color: white;
 }
 
+.itinerary{
+    background-color: white;
+    color: black;
+    border: darkgrey;
+
+    height: 70px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-left: -20px;
+    margin-right: -20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.itinerary .icon{
+    width: 50px;
+}
+.itinerary .main{
+    flex-grow: 1;
+}
+.itinerary .numbers{
+    text-align: right;
+    width: 70px;
+}
+.itinerary .duration{
+    font-weight: bold;
+}
+.itinerary .distance{
+    font-size: 12px;
+}
+
+.itinerary[highlighted]{
+    border-left: solid 10px dimgrey;
+}
+
 

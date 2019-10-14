@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import os
 load_dotenv()
+from flask import render_template
 
 import models.point
 from lib.openrouteservice import *
@@ -10,42 +11,28 @@ from lib.gmaps_to_geojson import *
 
 
 class ItineraryFactory:
+    def __init__(self):
+        self._builders = {
+            "foot": FootItinerary,
+            "bike": BikeItinerary,
+            "electric_bike": ElectricBikeItinerary,
+            "velib": VelibItinerary,
+            "transit": TransitItinerary,
+            "car": CarItinerary,
+            "bird": BirdItinerary,
+        }
+
     def generate_route(self, type, start, end):
-        generator = ItineraryFactory.get_generator(type)
-        return generator(start, end)
+        builder = self._builders.get(type)
+        if builder is None:
+            raise ValueError(type)
+        return builder(start, end)
 
-    @classmethod
-    def available_types(cls):
-        return [("foot", "marche"),
-                ("bike", "vélo"),
-                ("electric_bike", "vélo électrique"),
-                ("velib", "Vélib"),
-                ("transit", "transports en commun"),
-                ("car", "voiture"),
-                ("bird", "Bird"),
-                ("e-velib","Vélib électrique")
-                ]
-
-    @classmethod
-    def get_generator(cls, type):
-        if type == 'foot':
-            return FootItinerary
-        elif type == 'bike':
-            return BikeItinerary
-        elif type == 'electric_bike':
-            return ElectricBikeItinerary
-        elif type == 'velib':
-            return VelibItinerary
-        elif type == 'e-velib':
-            return eVelibItinerary
-        elif type == 'transit':
-            return TransitItinerary
-        elif type == 'car':
-            return CarItinerary
-        elif type == 'bird':
-            return BirdItinerary
-        else:
-            raise ValueError('Moyen de transport inconnu : '+type)
+    def generate_all_routes_json(self, start, end):
+        routes = []
+        for builder in self._builders:
+            routes.append(self.generate_route(builder, start, end).json())
+        return routes
 
 
 class Itinerary:
@@ -58,20 +45,18 @@ class Itinerary:
         self.disability_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
         pass
 
+    def html(self):
+        return render_template('show.html',
+                        name=self.itinerary_name,
+                        duration=self.duration,
+                        distance=self.distance,
+                        )
 
-    def route(start, end):
-        ##return a distance, duration and geoJSON
-        pass
-
-    def to_json(self):
-        json = {
-            "duration": self.duration,
-            "distance": self.distance,
-            "html": self.__str__(),
+    def json(self):
+        return {
+            "html": self.html(),
+            "geojson": self.geojson,
         }
-        if hasattr(self, 'geojson'):
-            json["geojson"]= self.geojson
-        return json
 
     def budget(self):
         self.total_cost = float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
@@ -152,6 +137,7 @@ class VelibItinerary(IndirectItinerary):
         self.routes = [FootItinerary(start,stationA), fact.generate_route("bike",stationA, stationB), FootItinerary(stationB,end)]
         super().__init__(start, end)
         self.cost = velib_cost(self.duration)
+        self.itinerary_name = "Velib"
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routes[0])
@@ -173,6 +159,7 @@ class eVelibItinerary(IndirectItinerary):
                        FootItinerary(stationB, end)]
         super().__init__(start, end)
         self.cost = evelib_cost(self.duration)
+        self.itinerary_name = "e-velib"
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routes[0])
@@ -192,6 +179,7 @@ class BirdItinerary(IndirectItinerary):
         self.routes = [FootItinerary(start,scooter), fact.generate_route("electric_bike", scooter, end)]
         ## to do : change speed (scooter is slower than a bike)
         super().__init__(start, end)
+        self.itinerary_name = "en trotinette bird"
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routes[0])
