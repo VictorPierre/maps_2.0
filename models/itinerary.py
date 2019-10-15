@@ -9,6 +9,8 @@ from lib.bird import *
 from lib.velib import *
 from lib.gmaps_to_geojson import *
 
+from threading import Thread
+from multiprocessing import Queue
 
 class ItineraryFactory:
     def __init__(self):
@@ -28,7 +30,30 @@ class ItineraryFactory:
             raise ValueError(type)
         return builder(start, end)
 
-    def generate_all_routes_json(self, start, end):
+    def generate_route_thread_json(self, type, start, end, out_queue):
+        try :
+            js= self.generate_route(type, start, end).json()
+        except SameStation as e :
+            print("Erreur sur un itinéraire")
+            print(e)
+        except ApiException as a :
+            print(a)
+        out_queue.put(js)
+
+    def generate_all_routes_threads_json(self, start, end):
+        routes = []
+        my_queue=Queue()
+        for builder in self._builders:
+            thread = Thread(target=self.generate_route_thread_json, args=(builder,start,end,my_queue))
+            thread.start()
+            thread.join
+        while my_queue.full :
+            routes.append(my_queue.get())
+        return routes
+
+
+
+    def generate_all_routes(self, start, end):
         routes = []
         for builder in self._builders:
             try :
