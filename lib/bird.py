@@ -3,7 +3,7 @@ import os
 load_dotenv()
 import requests
 from math import ceil
-import lib.API_Exception
+import lib.Exception
 
 def bird_find_scooter(lat,long):
     url = "https://api.birdapp.com/bird/nearby"

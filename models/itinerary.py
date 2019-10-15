@@ -17,7 +17,7 @@ class ItineraryFactory:
             "bike": BikeItinerary,
             "electric_bike": ElectricBikeItinerary,
             "velib": VelibItinerary,
-            "transit": TransitItinerary,
+            #"transit": TransitItinerary,
             "car": CarItinerary,
             "bird": BirdItinerary,
         }
@@ -31,7 +31,13 @@ class ItineraryFactory:
     def generate_all_routes_json(self, start, end):
         routes = []
         for builder in self._builders:
-            routes.append(self.generate_route(builder, start, end).json())
+            try :
+                routes.append(self.generate_route(builder, start, end).json())
+            except SameStation as e :
+                print("Erreur sur un itinéraire")
+                print(e)
+            except ApiException as a :
+                print(a)
         return routes
 
 
@@ -48,8 +54,8 @@ class Itinerary:
     def html(self):
         return render_template('show.html',
                         name=self.itinerary_name,
-                        duration=self.duration,
-                        distance=self.distance,
+                        duration=Itinerary.sec_to_time(self.duration),
+                        distance=Itinerary.meter_to_km(self.distance),
                         )
 
     def json(self):
@@ -57,6 +63,26 @@ class Itinerary:
             "html": self.html(),
             "geojson": self.geojson,
         }
+    def sec_to_time(time):
+        time = int(time)
+        heure = time//3600
+        minute = int((time-heure*3600)//60)
+        seconde = int((time - heure*3600 - minute*60))
+        if heure == 0 :
+            if minute == 0:
+                return str(time) + "s"
+            else :
+                return str(minute)+"mn"
+        else :
+            return str(heure)+"h"+str(minute)+"mn"
+
+    def meter_to_km(distance):
+        distance = int(distance)
+        if distance < 1000 :
+            return str(distance) + "m"
+        else :
+            return str(round(distance/1000,1)) + "km"
+
 
     def budget(self):
         self.total_cost = float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
@@ -82,7 +108,7 @@ class DirectItineray(Itinerary):
         super().__init__(self, start, end)
 
     def __str__(self):
-        return "L'itinéraire {} mesure {}m et dure {}s.".format(self.itinerary_name,self.distance, self.duration)
+        return "L'itinéraire {} mesure {}m et dure {}.".format(self.itinerary_name,self.distance, self.duration)
 
 
 class FootItinerary(DirectItineray):
@@ -129,6 +155,8 @@ class VelibItinerary(IndirectItinerary):
     def GiveStations(self, start, end):
         latA, longA = closest_velib_station(start.lat, start.long)
         latB, longB = closest_velib_station(end.lat, end.long)
+        if (latA, longA) == (latB, longB) :
+            raise SameStation ("Les deux stations de Velib sont les mêmes")
         return models.Point(latA, longA), models.Point(latB, longB)
 
     def __init__(self, start, end):
@@ -143,13 +171,16 @@ class VelibItinerary(IndirectItinerary):
         Aff = "Première étape:" + str(self.routes[0])
         Aff += "\nDeuxième étape :" + str(self.routes[1])
         Aff += "\nTroisième étape:" + str(self.routes[2])
-        Aff += ". Le trajet total dure" + str(self.duration) + "s"
+        Aff += ". Le trajet total dure" + str(self.duration)
         return Aff
 
 class eVelibItinerary(IndirectItinerary):
     def GiveStations(self, start, end):
         latA, longA = closest_evelib_station(start.lat, start.long)
         latB, longB = closest_evelib_station(end.lat, end.long)
+        if (latA, longA) == (latB, longB) :
+            raise SameStation ("Les deux stations de eVelib sont les mêmes")
+
         return models.Point(latA, longA), models.Point(latB, longB)
 
     def __init__(self, start, end):
@@ -165,7 +196,7 @@ class eVelibItinerary(IndirectItinerary):
         Aff = "Première étape:" + str(self.routes[0])
         Aff += "\nDeuxième étape :" + str(self.routes[1])
         Aff += "\nTroisième étape:" + str(self.routes[2])
-        Aff += ". Le trajet total dure" + str(self.duration) + "s"
+        Aff += ". Le trajet total dure" + str(self.duration)
         return Aff
 
 class BirdItinerary(IndirectItinerary):
@@ -186,3 +217,5 @@ class BirdItinerary(IndirectItinerary):
         Aff += "\nDeuxième étape :" + str(self.routes[1])
         Aff += ". Le trajet total dure" + str(self.duration) + "s"
         return Aff
+
+

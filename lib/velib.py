@@ -1,7 +1,7 @@
 from math import ceil
 
 import requests
-from lib.API_Exception import *
+from lib.Exception import *
 
 def closest_velib_station(lat,long):
 
