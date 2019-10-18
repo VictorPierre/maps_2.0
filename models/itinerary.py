@@ -13,6 +13,9 @@ from lib.gmaps_to_geojson import *
 from threading import Thread
 from multiprocessing import Queue
 
+import time
+import datetime
+
 class ItineraryFactory:
     def __init__(self):
         self._builders = {
@@ -33,7 +36,10 @@ class ItineraryFactory:
 
     def generate_all_routes(self, start, end):
         routes = []
+        tmpstot=datetime.timedelta()
         for builder in self._builders:
+            tmps1 = datetime.datetime.now()
+
             try :
                 routes.append(self.generate_route(builder, start, end).json())
             except SameStation as e :
@@ -41,6 +47,10 @@ class ItineraryFactory:
                 print(e)
             except ApiException as a :
                 print(a)
+            tmps2 = datetime.datetime.now()
+            print("Le temps total pour l'appel et le retour API pour {} est de {}".format(builder, tmps2 - tmps1))
+            tmpstot+=tmps2-tmps1
+        print("La sommation des temps totaux pour l'appel et le retour aux APIs pour est de {}".format(tmpstot))
         return routes
 
     def generate_route_thread(self, type, start, end, out_queue):
@@ -49,16 +59,41 @@ class ItineraryFactory:
             raise ValueError(type)
         out_queue.put(builder(start, end))
 
+
+
     def generate_all_routes_threads_json(self, start, end):
         routes = []
         my_queue=Queue()
+        threads=[]
+        tmpsstart=[]
+        tmpsend=[]
+        tmpsdiff=[]
+        tmpssum=datetime.timedelta()
         for builder in self._builders:
             thread = Thread(target=self.generate_route_thread, args=(builder,start,end,my_queue,))
+            threads.append(thread)
+
+        for thread in threads:
+            tmpsstart.append(datetime.datetime.now())
             thread.start()
+
+        for thread in threads:
             thread.join()
+            tmpsend.append(datetime.datetime.now())
+
+        for i in range (len(tmpsstart)):
+            tmpsdiff.append(tmpsend[i]-tmpsstart[i])
+            tmpssum+=tmpsdiff[-1]
+        print("La sommation des temps totaux pour l'appel et le retour aux APIs pour est de {}".format(tmpssum))
+
+        tmps1 = datetime.datetime.now()
         while int(my_queue.qsize())>0 :
+
             routes.append(my_queue.get().json())
+        tmps2 = datetime.datetime.now()
+        print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
         return routes
+
 
 
 
