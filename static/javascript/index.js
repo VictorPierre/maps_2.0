@@ -69,6 +69,12 @@ var displayRoutes = function (routes) {
         //create route id
         $("#routes .itinerary:last-child").attr('routeId', i)
     }
+    //show the appropriate rain message
+    if (rain){
+        $(".rain-ok").hide()
+        $(".rain-alert").show()
+    }
+
     highlightRoute(0);
     $(".itinerary").on('click', function(){
         routeId = parseInt($(this).attr("routeId"));
@@ -89,7 +95,7 @@ var showGeoJSON = function(geojson){
     //Reset the map
     resetMap();
     //display the geojson
-    L.geoJSON(geojson, {
+    markersLayer = L.geoJSON(geojson, {
         style: function(feature) {
             return {
                 "color": feature.properties.color || "#000000",
@@ -98,6 +104,7 @@ var showGeoJSON = function(geojson){
             };
         }
     }).addTo(map);
+    map.fitBounds(markersLayer.getBounds());
 }
 
 var resetMap = function () {

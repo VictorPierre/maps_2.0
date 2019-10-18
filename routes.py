@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, json
 from models import *
+from lib.weather import *
 
 
 app = Flask(__name__)
@@ -7,19 +8,7 @@ app = Flask(__name__)
 ##Index page
 @app.route('/')
 def index():
-    available_types= [
-        ("foot", "marche"),
-        ("bike", "vélo"),
-        ("electric_bike", "vélo électrique"),
-        ("velib", "Vélib"),
-        ("transit", "transports en commun"),
-        ("car", "voiture"),
-        ("bird", "Bird"),
-        ("e-velib","Vélib électrique")
-    ]
-
-    data = {'available_types': available_types}
-    return render_template('index.html', data=data)
+    return render_template('index.html', HasPrecipitation=HasPrecipitation())
 
 ##calculate itinerary from form
 @app.route('/', methods = ['POST'])

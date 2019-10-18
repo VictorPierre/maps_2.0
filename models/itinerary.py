@@ -112,6 +112,7 @@ class Itinerary:
     def __html(self):
         return render_template('show.html',
                         name=self.itinerary_name,
+                        picture_name = self.picture_name,
                         duration = self.__sec_to_time(),
                         distance = self.__meter_to_km(),
                         rain_compatible = self.rain_compatible,
@@ -149,6 +150,7 @@ class Itinerary:
 class FootItinerary(Itinerary):
     def __init__(self, start, end):
         self.itinerary_name = "à pied"
+        self.picture_name = "walker.jpeg"
         self.calories_per_hour = 168
         self.rain_compatible = True
         self.disability_compatible = True
@@ -163,6 +165,7 @@ class FootItinerary(Itinerary):
 class BikeItinerary(Itinerary):
     def __init__(self, start, end):
         self.itinerary_name = "en vélo"
+        self.picture_name = "bicycle.png"
         self.calories_per_hour = 300
         self.rain_compatible = False
         self.disability_compatible = False
@@ -178,6 +181,7 @@ class BikeItinerary(Itinerary):
 class ElectricBikeItinerary(Itinerary):
     def __init__(self, start, end):
         self.itinerary_name = "en vélo éléctrique"
+        self.picture_name = "electric-bike.png"
         self.calories_per_hour = 0
         self.rain_compatible = False
         self.disability_compatible = False
@@ -192,6 +196,7 @@ class ElectricBikeItinerary(Itinerary):
 class CarItinerary(Itinerary):
     def __init__(self, start, end):
         self.itinerary_name = "en voiture"
+        self.picture_name = "car-compact.png"
         self.calories_per_hour = 0
         self.rain_compatible = True
         self.disability_compatible = True
@@ -206,6 +211,7 @@ class CarItinerary(Itinerary):
 class TransitItinerary(Itinerary):
     def __init__(self, start, end):
         self.itinerary_name = "en transports en commun"
+        self.picture_name = "bus.png"
         self.calories_per_hour = 0
         self.rain_compatible = True
         self.disability_compatible = True ##TO DO
@@ -237,6 +243,7 @@ class VelibItinerary(IndirectItinerary):
 
     def __init__(self, start, end):
         self.itinerary_name = "Vélib"
+        self.picture_name = "bicycle.png"
         (stationA, stationB) = self.__GiveStations(start, end)
         fact = ItineraryFactory()
         self.routes = [FootItinerary(start,stationA), fact.generate_route("bike",stationA, stationB), FootItinerary(stationB,end)]
@@ -264,6 +271,7 @@ class eVelibItinerary(IndirectItinerary):
 
     def __init__(self, start, end):
         self.itinerary_name = "e-velib"
+        self.picture_name = "electric-bike.png"
         (stationA, stationB) = self.__GiveStations(start, end)
         fact = ItineraryFactory()
         self.routes = [FootItinerary(start, stationA), fact.generate_route("electric_bike", stationA, stationB),
@@ -292,6 +300,7 @@ class BirdItinerary(IndirectItinerary):
 
     def __init__(self, start, end):
         self.itinerary_name = "en trotinette bird"
+        self.picture_name = "scooter.png"
 
         scooter = self.__FindScooter(start)
         fact = ItineraryFactory()

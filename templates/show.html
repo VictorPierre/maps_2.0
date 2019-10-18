@@ -1,15 +1,23 @@
 <div class="itinerary">
-    <div class="icon"></div>
-    <div class="main">{{name}}</div>
-    <div class="numbers">
-        <div class="duration">{{duration}}</div>
-        <div class="distance">{{distance}}</div>
+    <div class="main">
+        <img class="icon" src="{{ url_for('static', filename='images/'+picture_name) }}" alt="{{picture_name}}">
+        <div class="name">{{name}}</div>
+        <div class="numbers">
+            <div class="duration">{{duration}}</div>
+            <div class="distance">{{distance}}</div>
+        </div>
     </div>
+
     <div class="more_info">
-        <div>Compatible pluie : {{rain_compatible}}</div>
+        {% if not rain_compatible%}
+            <div class="rain-ok">Pas de pluie annoncée</div>
+            <div class="rain-alert">Attention, il risque de pleuvoir</div>
+        {% endif %}
         <div>Compatible handicapé : {{disability_compatible}}</div>
         <div>Prix : {{budget}}</div>
         <div>CO2: {{carbon_emission}}</div>
         <div>Calories : {{calories}}</div>
     </div>
 </div>
+
+
