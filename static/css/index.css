@@ -57,8 +57,17 @@ body{
     font-size: 12px;
 }
 
+.itinerary .more_info{
+    display: none;
+}
+
 .itinerary[highlighted]{
     border-left: solid 10px dimgrey;
+}
+
+.itinerary[highlighted] .more_info{
+    display: block;
+    flex-grow: 1;
 }
 
 

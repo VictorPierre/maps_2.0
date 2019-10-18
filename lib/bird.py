@@ -27,7 +27,7 @@ def bird_find_scooter(lat,long):
 
 #retourne le coût en euros pour une durée de trajet en minute
 def bird_cost(duration):
-    return 1 + 0.25*ceil(duration)
+    return 1 + 0.25*ceil(duration/60)
 
 #print(bird_find_scooter(48.83278,2.33800))
 #to do : recuperer la trotinette optimale et pas la plus proche

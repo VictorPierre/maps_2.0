@@ -32,9 +32,9 @@ def closest_evelib_station(lat,long):
     return station_lat, station_long
 
 def velib_cost(duration):
-    return 1*ceil(duration / 60)
+    return 1*ceil(duration / (30*60))
 
 def evelib_cost(duration):
-    return 2*ceil(duration / 60)
+    return 2*ceil(duration / (30*60))
 
 
