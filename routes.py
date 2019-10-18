@@ -1,5 +1,8 @@
 from flask import Flask, render_template, request, json
 from models import *
+import time
+import datetime
+
 
 
 app = Flask(__name__)
@@ -35,7 +38,11 @@ def calculate_itinerary():
     end = Point(end_lat, end_long)
 
     fact = ItineraryFactory()
-    routes = fact.generate_all_routes(start, end) #non multi_threadé
-    #routes = fact.generate_all_routes_threads_json(start, end) #tentative de multi_thread
 
+    tmps1 = datetime.datetime.now()
+
+    #routes = fact.generate_all_routes(start, end) #non multi_thread                        # Temps d'execution 0:00:03.505513
+    routes = fact.generate_all_routes_threads_json(start, end) #tentative de multi_thread # Temps d'execution 0:00:03.627026
+    tmps2 = datetime.datetime.now()
+    print(tmps2 - tmps1)
     return json.jsonify(routes)

@@ -30,29 +30,6 @@ class ItineraryFactory:
             raise ValueError(type)
         return builder(start, end)
 
-    def generate_route_thread_json(self, type, start, end, out_queue):
-        try :
-            js= self.generate_route(type, start, end).json()
-        except SameStation as e :
-            print("Erreur sur un itinéraire")
-            print(e)
-        except ApiException as a :
-            print(a)
-        out_queue.put(js)
-
-    def generate_all_routes_threads_json(self, start, end):
-        routes = []
-        my_queue=Queue()
-        for builder in self._builders:
-            thread = Thread(target=self.generate_route_thread_json, args=(builder,start,end,my_queue))
-            thread.start()
-            thread.join
-        while my_queue.full :
-            routes.append(my_queue.get())
-        return routes
-
-
-
     def generate_all_routes(self, start, end):
         routes = []
         for builder in self._builders:
@@ -64,6 +41,25 @@ class ItineraryFactory:
             except ApiException as a :
                 print(a)
         return routes
+
+    def generate_route_thread(self, type, start, end, out_queue):
+        builder = self._builders.get(type)
+        if builder is None:
+            raise ValueError(type)
+        out_queue.put(builder(start, end))
+
+    def generate_all_routes_threads_json(self, start, end):
+        routes = []
+        my_queue=Queue()
+        for builder in self._builders:
+            thread = Thread(target=self.generate_route_thread, args=(builder,start,end,my_queue,))
+            thread.start()
+            thread.join()
+        while int(my_queue.qsize())>0 :
+            routes.append(my_queue.get().json())
+        return routes
+
+
 
 
 class Itinerary:
