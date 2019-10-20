@@ -18,7 +18,9 @@ def gmaps_transit_itinerary(start, end):
 
     ##Convert to GeoJson
     steps = gmaps_to_geojson(direction['steps'])
-    #steps = direction["steps"]
+
+    if len(steps)<2:
+        raise ValueError('Aucun itinéraire trouvé')
 
     return duration, distance, steps
 

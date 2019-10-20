@@ -24,7 +24,8 @@ def calculate_itinerary():
     end = Point(end_lat, end_long)
 
     fact = ItineraryFactory()
-    routes = fact.generate_all_routes(start, end) #non multi_threadé
+    fact.generate_all_routes(start,end)
+    routes = fact.json() #non multi_threadé
     #routes = fact.generate_all_routes_threads_json(start, end) #tentative de multi_thread
 
     return json.jsonify(routes)

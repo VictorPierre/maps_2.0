@@ -13,6 +13,8 @@ from lib.gmaps_to_geojson import *
 from threading import Thread
 from multiprocessing import Queue
 
+##Class that contains all the different routes for a given start and end
+
 class ItineraryFactory:
     def __init__(self):
         self._builders = {
@@ -20,16 +22,34 @@ class ItineraryFactory:
             "bike": BikeItinerary,
             "electric_bike": ElectricBikeItinerary,
             "velib": VelibItinerary,
+            "e-velib": eVelibItinerary,
             #"transit": TransitItinerary,
             "car": CarItinerary,
             "bird": BirdItinerary,
         }
+        self.routes = []
 
     def generate_route(self, type, start, end):
         builder = self._builders.get(type)
         if builder is None:
             raise ValueError(type)
-        return builder(start, end)
+        try:
+            route = builder(start, end)
+            self.routes.append(route)
+            return route
+        except (SameStation, ValueError, ApiException) as e:
+            print("Impossible de générer l'itinéraire :")
+            print(e)
+
+    def generate_all_routes(self, start, end):
+        for builder in self._builders:
+            self.generate_route(builder, start, end)
+
+    def json(self):
+        json = []
+        for route in self.routes:
+            json.append(route.json())
+        return json
 
     def generate_route_thread_json(self, type, start, end, out_queue):
         try :
@@ -53,20 +73,6 @@ class ItineraryFactory:
         return routes
 
 
-
-    def generate_all_routes(self, start, end):
-        routes = []
-        for builder in self._builders:
-            try :
-                routes.append(self.generate_route(builder, start, end).json())
-            except SameStation as e :
-                print("Erreur sur un itinéraire")
-                print(e)
-            except ApiException as a :
-                print(a)
-        return routes
-
-
 class Itinerary:
     """
     ABSTRACT CLASS, implementing the following attributes/methods
@@ -81,7 +87,7 @@ class Itinerary:
 
     METHODS :
     - budget(self) -> float (return the cost in €)
-    - carbon_emission(self) -> float (return the CO2 emissions in kg)
+    - carbon_emission(self) -> float (return the CO2 emissions in kg)  source : http://www.cyclic.info/le-velo-a-assistance-electrique-est-il-polluant/
     - calories(self) -> float (return the amount of kcal)
     - json(self) -> json (return a JSON containing the geojson + an HTML preview of the itinerary)
     """
@@ -98,7 +104,7 @@ class Itinerary:
         return float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
 
     def carbon_emission(self):
-        return float(self.distance)*float(self.C02_per_km)
+        return float(self.distance)/1000*float(self.C02_per_km)
 
     def calories(self):
         return float(self.calories_per_hour)*float(self.duration)/3600
@@ -152,13 +158,12 @@ class FootItinerary(Itinerary):
         self.itinerary_name = "à pied"
         self.picture_name = "walker.jpeg"
         self.calories_per_hour = 168
+        self.C02_per_km = 16
         self.rain_compatible = True
         self.disability_compatible = True
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "foot-walking")
 
     def budget(self):
-        return 0
-    def carbon_emission(self):
         return 0
 
 
@@ -167,6 +172,7 @@ class BikeItinerary(Itinerary):
         self.itinerary_name = "en vélo"
         self.picture_name = "bicycle.png"
         self.calories_per_hour = 300
+        self.C02_per_km = 21
         self.rain_compatible = False
         self.disability_compatible = False
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-regular")
@@ -175,14 +181,13 @@ class BikeItinerary(Itinerary):
 
     def budget(self):
         return 0
-    def carbon_emission(self):
-        return 0
 
 class ElectricBikeItinerary(Itinerary):
     def __init__(self, start, end):
         self.itinerary_name = "en vélo éléctrique"
         self.picture_name = "electric-bike.png"
         self.calories_per_hour = 0
+        self.C02_per_km = 22
         self.rain_compatible = False
         self.disability_compatible = False
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-electric")
@@ -190,21 +195,18 @@ class ElectricBikeItinerary(Itinerary):
         self.geojson["properties"]["color"]="#AA0115"
     def budget(self):
         return 0
-    def carbon_emission(self):
-        return 0
 
 class CarItinerary(Itinerary):
     def __init__(self, start, end):
         self.itinerary_name = "en voiture"
         self.picture_name = "car-compact.png"
         self.calories_per_hour = 0
+        self.C02_per_km = 271
         self.rain_compatible = True
         self.disability_compatible = True
         (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "driving-car")
         self.geojson["properties"]["color"]="#AA0115"
     def budget(self): ##TO DO
-        return 0
-    def carbon_emission(self): ##TO DO
         return 0
 
 
@@ -213,13 +215,12 @@ class TransitItinerary(Itinerary):
         self.itinerary_name = "en transports en commun"
         self.picture_name = "bus.png"
         self.calories_per_hour = 0
+        self.C02_per_km = 101
         self.rain_compatible = True
         self.disability_compatible = True ##TO DO
         (self.duration, self.distance, self.geojson) = gmaps_transit_itinerary(start, end)
     def budget(self): ##TO DO
-        return 0
-    def carbon_emission(self): ##TO DO
-        return 0
+        return 1.90
 
 
 ###ITINERAIRES INDIRECTS : listes d'itinéraires directs
