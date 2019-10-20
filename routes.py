@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, json
 from models import *
 from lib.weather import *
-
+import time
+import datetime
 
 app = Flask(__name__)
 
@@ -24,8 +25,11 @@ def calculate_itinerary():
     end = Point(end_lat, end_long)
 
     fact = ItineraryFactory()
-    fact.generate_all_routes(start,end)
-    routes = fact.json() #non multi_threadé
-    #routes = fact.generate_all_routes_threads_json(start, end) #tentative de multi_thread
+    tmps1 = datetime.datetime.now()
 
-    return json.jsonify(routes)
+    fact.generate_all_routes(start, end) #non multi_thread           # Temps d'execution 0:00:02.472217
+    #routes = fact.generate_all_routes_threads_json(start, end) #multi_thread # Temps d'execution 0:00:01.599014
+
+    tmps2 = datetime.datetime.now()
+    print("Le temps total pour les appels et retours aux API est de {}".format(tmps2-tmps1))
+    return json.jsonify(fact.json())
