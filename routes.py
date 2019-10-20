@@ -27,8 +27,10 @@ def calculate_itinerary():
     fact = ItineraryFactory()
     tmps1 = datetime.datetime.now()
 
-    fact.generate_all_routes(start, end) #non multi_thread           # Temps d'execution 0:00:02.472217
-    #routes = fact.generate_all_routes_threads_json(start, end) #multi_thread # Temps d'execution 0:00:01.599014
+    #fact.generate_all_routes(start, end) #non multi_thread           # Temps d'execution 0:00:02.472217
+    routes = fact.generate_all_routes_threads_json(start, end)#multi_thread # Temps d'execution 0:00:01.599014
+    routes.sort_by_duration()
+    routes = routes.json()
 
     tmps2 = datetime.datetime.now()
     print("Le temps total pour les appels et retours aux API est de {}".format(tmps2-tmps1))

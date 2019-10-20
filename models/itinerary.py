@@ -67,7 +67,6 @@ class ItineraryFactory:
 
 
     def generate_all_routes_threads_json(self, start, end):
-        routes = []
         my_queue=Queue()
         threads=[]
         tmpsstart=[]
@@ -94,10 +93,18 @@ class ItineraryFactory:
         tmps1 = datetime.datetime.now()
         while int(my_queue.qsize())>0 :
 
-            routes.append(my_queue.get().json())
+            self.routes.append(my_queue.get())
         tmps2 = datetime.datetime.now()
         print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
-        return routes
+        return self
+
+    def sort_by_duration(self):
+        self.routes.sort(key=lambda x: x.duration, reverse=False)
+        pass
+    def sort_by_distance(self):
+        self.routes.sort(key=lambda x: x.distance, reverse=False)
+        pass
+
 
 
 class Itinerary:
