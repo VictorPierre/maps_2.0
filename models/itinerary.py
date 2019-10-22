@@ -32,6 +32,9 @@ class ItineraryFactory:
         self._sort_methods = {
             "duration" : self.sort_by_duration,
             "distance" : self.sort_by_distance,
+            "co2" : self.sort_by_co2,
+            "calories" : self.sort_by_calories_asc,
+            "sport" : self.sort_by_calories_des,
         }
         self.routes = []
 
@@ -67,7 +70,11 @@ class ItineraryFactory:
         builder = self._builders.get(type)
         if builder is None:
             raise ValueError(type)
-        out_queue.put(builder(start, end))
+        try :
+            out_queue.put(builder(start, end))
+        except (SameStation, ValueError, ApiException) as e:
+            print("Impossible de générer l'itinéraire :")
+            print(e)
 
 
     def generate_all_routes_threads_json(self, start, end):
@@ -113,6 +120,15 @@ class ItineraryFactory:
         pass
     def sort_by_distance(self):
         self.routes.sort(key=lambda x: x.distance, reverse=False)
+        pass
+    def sort_by_co2(self):
+        self.routes.sort(key=lambda x: x.carbon_emission(), reverse=False)
+        pass
+    def sort_by_calories_asc(self):
+        self.routes.sort(key=lambda x: x.calories(), reverse=False)
+        pass
+    def sort_by_calories_des(self):
+        self.routes.sort(key=lambda x: x.calories(), reverse=True)
         pass
 
 
@@ -167,9 +183,9 @@ class Itinerary:
                         distance = self.__meter_to_km(),
                         rain_compatible = self.rain_compatible,
                         disability_compatible = self.disability_compatible,
-                        budget = self.budget(),
-                        carbon_emission= self.carbon_emission(),
-                        calories = self.calories(),
+                        budget = str(round(self.budget(),2)) + " €",
+                        carbon_emission= str(round(self.carbon_emission())) + " g",
+                        calories = str(round(self.calories())) + " Kcal",
                         )
 
     #Convert self.distance into a pretty format
@@ -228,9 +244,9 @@ class BikeItinerary(Itinerary):
 
 class ElectricBikeItinerary(Itinerary):
     def __init__(self, start, end):
-        self.itinerary_name = "en vélo éléctrique"
+        self.itinerary_name = "en vélo électrique"
         self.picture_name = "electric-bike.png"
-        self.calories_per_hour = 0
+        self.calories_per_hour = 100
         self.C02_per_km = 22
         self.rain_compatible = False
         self.disability_compatible = False

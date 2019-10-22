@@ -4,6 +4,7 @@ import os
 
 load_dotenv()
 
+#class that contains objects Point with latitude, longitude and adress as attributes
 class Point:
     def __init__(self, lat=None, long=None, address=None):
         if address is None:

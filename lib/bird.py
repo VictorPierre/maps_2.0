@@ -5,6 +5,8 @@ import requests
 from math import ceil
 import lib.Exception
 
+#function which gives the location of the closest bird scooter
+
 def bird_find_scooter(lat,long):
     url = "https://api.birdapp.com/bird/nearby"
     params = {"latitude": lat, "longitude": long, "radius": "1000"}
