@@ -4,6 +4,7 @@ from lib.weather import *
 import time
 import datetime
 
+
 app = Flask(__name__)
 
 ##Index page
@@ -33,6 +34,7 @@ def calculate_itinerary():
 
 
     routes.sort(choix)
+    routes.grade_by_duration()
     routes_json = routes.json()
 
     tmps2 = datetime.datetime.now()
