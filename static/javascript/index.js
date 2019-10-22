@@ -30,6 +30,11 @@ $( document ).ready(function() {
        document.querySelector('#end_long').value = e.suggestion.latlng['lng'] || '';
     });
 
+    $(".toggleButton").on('click', function() {
+        $("#options-content").toggleClass('flex');
+        $("#options>div").toggle();
+    });
+
     //Form submission
     $("#form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
