@@ -29,6 +29,10 @@ class ItineraryFactory:
             "car": CarItinerary,
             "bird": BirdItinerary,
         }
+        self._sort_methods = {
+            "duration" : self.sort_by_duration,
+            "distance" : self.sort_by_distance,
+        }
         self.routes = []
 
     def generate_route(self, type, start, end):
@@ -96,7 +100,13 @@ class ItineraryFactory:
             self.routes.append(my_queue.get())
         tmps2 = datetime.datetime.now()
         print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
-        return self
+
+    def sort(self, choix):
+        sortmethod = self._sort_methods.get(choix)
+        if sortmethod is None :
+            raise ValueError(choix)
+        sortmethod()
+
 
     def sort_by_duration(self):
         self.routes.sort(key=lambda x: x.duration, reverse=False)

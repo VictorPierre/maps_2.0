@@ -19,19 +19,22 @@ def calculate_itinerary():
     start_long = request.form.get('start_long', type=float)
     end_lat = request.form.get('end_lat', type=float)
     end_long = request.form.get('end_long', type=float)
+    choix = request.form.get('choice')
 
     #Calculate the best itinerary
     start = Point(start_lat, start_long)
     end = Point(end_lat, end_long)
 
-    fact = ItineraryFactory()
+    routes = ItineraryFactory()
     tmps1 = datetime.datetime.now()
 
     #fact.generate_all_routes(start, end) #non multi_thread           # Temps d'execution 0:00:02.472217
-    routes = fact.generate_all_routes_threads_json(start, end)#multi_thread # Temps d'execution 0:00:01.599014
-    routes.sort_by_duration()
-    routes = routes.json()
+    routes.generate_all_routes_threads_json(start, end)#multi_thread # Temps d'execution 0:00:01.599014
+
+
+    routes.sort(choix)
+    routes_json = routes.json()
 
     tmps2 = datetime.datetime.now()
     print("Le temps total pour les appels et retours aux API est de {}".format(tmps2-tmps1))
-    return json.jsonify(fact.json())
+    return json.jsonify(routes_json)
