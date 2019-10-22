@@ -35,28 +35,6 @@ class ItineraryFactory:
         }
         self.routes = []
 
-    def generate_route(self, type, start, end):
-        builder = self._builders.get(type)
-        if builder is None:
-            raise ValueError(type)
-        try:
-            route = builder(start, end)
-            self.routes.append(route)
-            return route
-        except (SameStation, ValueError, ApiException) as e:
-            print("Impossible de générer l'itinéraire :")
-            print(e)
-
-    def generate_all_routes(self, start, end):
-        tmpstot = datetime.timedelta()
-        for builder in self._builders:
-            tmps1 = datetime.datetime.now()
-            self.generate_route(builder, start, end)
-            tmps2 = datetime.datetime.now()
-            print("Le temps total pour l'appel et le retour API pour {} est de {}".format(builder, tmps2 - tmps1))
-            tmpstot += tmps2 - tmps1
-        print("La sommation des temps totaux pour l'appel et le retour aux APIs pour est de {}".format(tmpstot))
-
     def json(self):
         json = []
         for route in self.routes:
@@ -77,29 +55,36 @@ class ItineraryFactory:
         tmpsend=[]
         tmpsdiff=[]
         tmpssum=datetime.timedelta()
+
+        #Creation des threads pour chaque type d'itinéraire
         for builder in self._builders:
             thread = Thread(target=self.generate_route_thread, args=(builder,start,end,my_queue,))
             threads.append(thread)
 
+        #Démarrage de chaque thread
         for thread in threads:
             tmpsstart.append(datetime.datetime.now())
             thread.start()
 
+        #Pour chaque thread on précise la nécessité d'attendre les autres avant d'avancer
         for thread in threads:
             thread.join()
             tmpsend.append(datetime.datetime.now())
 
-        for i in range (len(tmpsstart)):
-            tmpsdiff.append(tmpsend[i]-tmpsstart[i])
-            tmpssum+=tmpsdiff[-1]
-        print("La sommation des temps totaux pour l'appel et le retour aux APIs pour est de {}".format(tmpssum))
+        #Vérification de la pertinence temporelle du multi-thread
+        #for i in range (len(tmpsstart)):
+         #   tmpsdiff.append(tmpsend[i]-tmpsstart[i])
+         #   tmpssum+=tmpsdiff[-1]
+        #print("La sommation des temps totaux pour l'appel et le retour aux APIs pour est de {}".format(tmpssum))
 
-        tmps1 = datetime.datetime.now()
+        #tmps1 = datetime.datetime.now()
+
+        #Reprend les infos dans la queue venant des threads
         while int(my_queue.qsize())>0 :
 
             self.routes.append(my_queue.get())
-        tmps2 = datetime.datetime.now()
-        print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
+        #tmps2 = datetime.datetime.now()
+        #print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
 
     def sort(self, choix):
         sortmethod = self._sort_methods.get(choix)
