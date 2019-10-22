@@ -3,6 +3,7 @@ import os
 load_dotenv()
 import googlemaps
 
+#function to find the itinerary in transit thanks to Maps API
 def gmaps_transit_itinerary(start, end):
     duration, distance, geojson = 0, 0, {}
 
@@ -24,6 +25,7 @@ def gmaps_transit_itinerary(start, end):
 
     return duration, distance, steps
 
+#function to convert the answer of Maps API into a geojson object
 def gmaps_to_geojson(steps):
     geojson = []
     for step in steps:

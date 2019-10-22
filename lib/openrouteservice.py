@@ -4,6 +4,7 @@ load_dotenv()
 import requests
 from lib.Exception import *
 
+#function to get itinerary in car, electric bike, bike, scooter or walking thanks to openrouteservice API
 def openrouteservice_itinerary(start, end, means_of_transport,open_route_api_key=os.getenv("OPEN_ROUTE_SERVICE_API_KEY")):
     duration, distance, geojson = 0, 0, {}
     ##Call the API only if the start and end are 2 different points

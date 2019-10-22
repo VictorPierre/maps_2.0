@@ -3,6 +3,7 @@ from math import ceil
 import requests
 from lib.Exception import *
 
+#function to find the closest velib station for a certain point
 def closest_velib_station(lat,long):
 
     reponse = requests.get(
@@ -17,6 +18,7 @@ def closest_velib_station(lat,long):
     station_long = resp['records'][0]['fields']['geo'][1]
     return station_lat, station_long
 
+#function to find the closest e-velib station for a certain point
 def closest_evelib_station(lat,long):
 
     reponse = requests.get(
@@ -31,9 +33,11 @@ def closest_evelib_station(lat,long):
     station_long = resp['records'][0]['fields']['geo'][1]
     return station_lat, station_long
 
+#function which calculates the cost for using a velib
 def velib_cost(duration):
     return 1*ceil(duration / (30*60))
 
+#function which calculates the cost for using a e-velib
 def evelib_cost(duration):
     return 2*ceil(duration / (30*60))
 
