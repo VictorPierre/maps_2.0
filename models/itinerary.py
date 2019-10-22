@@ -13,6 +13,8 @@ from lib.gmaps_to_geojson import *
 from threading import Thread
 from multiprocessing import Queue
 
+from statistics import *
+
 ##Class that contains all the different routes for a given start and end
 import time
 import datetime
@@ -41,7 +43,7 @@ class ItineraryFactory:
             json.append(route.json())
         return json
 
-    def generate_route_thread(self, type, start, end, out_queue):
+    def generate_route(self, type, start, end, out_queue):
         builder = self._builders.get(type)
         if builder is None:
             raise ValueError(type)
@@ -58,7 +60,7 @@ class ItineraryFactory:
 
         #Creation des threads pour chaque type d'itinéraire
         for builder in self._builders:
-            thread = Thread(target=self.generate_route_thread, args=(builder,start,end,my_queue,))
+            thread = Thread(target=self.generate_route, args=(builder,start,end,my_queue,))
             threads.append(thread)
 
         #Démarrage de chaque thread
@@ -99,6 +101,28 @@ class ItineraryFactory:
     def sort_by_distance(self):
         self.routes.sort(key=lambda x: x.distance, reverse=False)
         pass
+
+    def sort_by_grade(self):
+        self.routes.sort(key=lambda x: x.grade, reverse=False)
+
+
+
+    def grade(self, choix):
+        grademethod = self._grade_methods.get(choix)
+        if grademethod is None:
+            raise ValueError(choix)
+        grademethod()
+
+    def grade_by_duration(self):
+        duration = [route.distance for route in self.routes]
+        print(duration)
+        pass
+
+    #def grade_by_distance(self):
+     #   self.routes.mean(key=lambda x: x.distance, reverse=False)
+      #  pass
+
+
 
 
 
@@ -275,8 +299,7 @@ class VelibItinerary(IndirectItinerary):
         self.itinerary_name = "Vélib"
         self.picture_name = "bicycle.png"
         (stationA, stationB) = self.__GiveStations(start, end)
-        fact = ItineraryFactory()
-        self.routes = [FootItinerary(start,stationA), fact.generate_route("bike",stationA, stationB), FootItinerary(stationB,end)]
+        self.routes = [FootItinerary(start,stationA), BikeItinerary(stationA, stationB), FootItinerary(stationB,end)]
         super().__init__(start, end)
 
     def budget(self):
@@ -303,9 +326,9 @@ class eVelibItinerary(IndirectItinerary):
         self.itinerary_name = "e-velib"
         self.picture_name = "electric-bike.png"
         (stationA, stationB) = self.__GiveStations(start, end)
-        fact = ItineraryFactory()
-        self.routes = [FootItinerary(start, stationA), fact.generate_route("electric_bike", stationA, stationB),
+        self.routes = [FootItinerary(start, stationA), ElectricBikeItinerary(stationA, stationB),
                        FootItinerary(stationB, end)]
+
         super().__init__(start, end)
 
     def budget(self):
@@ -333,8 +356,7 @@ class BirdItinerary(IndirectItinerary):
         self.picture_name = "scooter.png"
 
         scooter = self.__FindScooter(start)
-        fact = ItineraryFactory()
-        self.routes = [FootItinerary(start,scooter), fact.generate_route("electric_bike", scooter, end)]
+        self.routes = [FootItinerary(start,scooter), ElectricBikeItinerary(scooter, end)]
         ## to do : change speed (scooter is slower than a bike)
         super().__init__(start, end)
 
