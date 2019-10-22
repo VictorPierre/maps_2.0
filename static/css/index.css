@@ -22,6 +22,9 @@ body{
     background-color: darkgrey;
     color: white;
 }
+#form{
+    margin-top: 30px;
+}
 
 #options, #options-content{
     background-color: #555555;

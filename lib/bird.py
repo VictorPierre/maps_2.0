@@ -3,7 +3,7 @@ import os
 load_dotenv()
 import requests
 from math import ceil
-import lib.Exception
+from lib.Exception import *
 
 #function which gives the location of the closest bird scooter
 
