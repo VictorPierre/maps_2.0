@@ -1,7 +1,7 @@
 from math import ceil
 
 import requests
-from lib.Exception import *
+from .exceptions import *
 
 #function to find the closest velib station for a certain point
 def closest_velib_station(lat,long):

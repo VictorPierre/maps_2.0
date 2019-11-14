@@ -1,19 +1,11 @@
-from dotenv import load_dotenv
-import os
-load_dotenv()
 from flask import render_template
 import numpy as np
-
-import models.point
-from lib.openrouteservice import *
-from lib.bird import *
-from lib.velib import *
-from lib.gmaps_to_geojson import *
-
 from threading import Thread
 from multiprocessing import Queue
-
 from statistics import *
+
+from .point import Point
+from lib_APIs import *
 
 ##Class that contains all the different routes for a given start and end
 import time
@@ -27,16 +19,16 @@ class ItineraryFactory:
             "electric_bike": ElectricBikeItinerary,
             "velib": VelibItinerary,
             "e-velib": eVelibItinerary,
-            #"transit": TransitItinerary,
+            # "transit": TransitItinerary,
             "car": CarItinerary,
             "bird": BirdItinerary,
         }
         self._sort_methods = {
-            "duration" : self.sort_by_duration,
-            "distance" : self.sort_by_distance,
-            "co2" : self.sort_by_co2,
-            "calories" : self.sort_by_calories_asc,
-            "sport" : self.sort_by_calories_des,
+            "duration": self.sort_by_duration,
+            "distance": self.sort_by_distance,
+            "co2": self.sort_by_co2,
+            "calories": self.sort_by_calories_asc,
+            "sport": self.sort_by_calories_des,
         }
         self.routes = []
 
@@ -52,7 +44,7 @@ class ItineraryFactory:
             raise ValueError(type)
         try :
             out_queue.put(builder(start, end))
-        except (SameStation, ValueError, ApiException) as e:
+        except (exceptions.SameStation, ValueError, exceptions.ApiException) as e:
             print("Impossible de générer l'itinéraire :")
             print(e)
 
@@ -230,7 +222,7 @@ class FootItinerary(Itinerary):
         self.C02_per_km = 16
         self.rain_compatible = True
         self.disability_compatible = True
-        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "foot-walking")
+        (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "foot-walking")
 
     def budget(self):
         return 0
@@ -244,7 +236,7 @@ class BikeItinerary(Itinerary):
         self.C02_per_km = 21
         self.rain_compatible = False
         self.disability_compatible = False
-        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-regular")
+        (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "cycling-regular")
         ##Green color for the geojson
         self.geojson["properties"]["color"]="#026928"
 
@@ -259,7 +251,7 @@ class ElectricBikeItinerary(Itinerary):
         self.C02_per_km = 22
         self.rain_compatible = False
         self.disability_compatible = False
-        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "cycling-electric")
+        (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "cycling-electric")
         ##Red color for the geojson
         self.geojson["properties"]["color"]="#AA0115"
     def budget(self):
@@ -273,7 +265,7 @@ class CarItinerary(Itinerary):
         self.C02_per_km = 271
         self.rain_compatible = True
         self.disability_compatible = True
-        (self.duration,self.distance, self.geojson)= openrouteservice_itinerary(start, end, "driving-car")
+        (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "driving-car")
         self.geojson["properties"]["color"]="#AA0115"
     def budget(self): ##TO DO
         return 0
@@ -287,7 +279,7 @@ class TransitItinerary(Itinerary):
         self.C02_per_km = 101
         self.rain_compatible = True
         self.disability_compatible = True ##TO DO
-        (self.duration, self.distance, self.geojson) = gmaps_transit_itinerary(start, end)
+        (self.duration, self.distance, self.geojson) = gmaps.transit_itinerary(start, end)
     def budget(self): ##TO DO
         return 1.90
 
@@ -319,7 +311,7 @@ class VelibItinerary(IndirectItinerary):
         super().__init__(start, end)
 
     def budget(self):
-        return velib_cost(self.routes[1].duration)
+        return velib.velib_cost(self.routes[1].duration)
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routes[0])
@@ -329,11 +321,11 @@ class VelibItinerary(IndirectItinerary):
         return Aff
 
     def __GiveStations(self, start, end):
-        latA, longA = closest_velib_station(start.lat, start.long)
-        latB, longB = closest_velib_station(end.lat, end.long)
+        latA, longA = velib.closest_velib_station(start.lat, start.long)
+        latB, longB = velib.closest_velib_station(end.lat, end.long)
         if (latA, longA) == (latB, longB) :
             raise SameStation ("Les deux stations de Velib sont les mêmes")
-        return models.Point(latA, longA), models.Point(latB, longB)
+        return Point(latA, longA), Point(latB, longB)
 
 
 class eVelibItinerary(IndirectItinerary):
@@ -348,7 +340,7 @@ class eVelibItinerary(IndirectItinerary):
         super().__init__(start, end)
 
     def budget(self):
-        return evelib_cost(self.routes[1].duration)
+        return velib.evelib_cost(self.routes[1].duration)
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routes[0])
@@ -358,12 +350,12 @@ class eVelibItinerary(IndirectItinerary):
         return Aff
 
     def __GiveStations(self, start, end):
-        latA, longA = closest_evelib_station(start.lat, start.long)
-        latB, longB = closest_evelib_station(end.lat, end.long)
+        latA, longA = velib.closest_evelib_station(start.lat, start.long)
+        latB, longB = velib.closest_evelib_station(end.lat, end.long)
         if (latA, longA) == (latB, longB) :
             raise SameStation ("Les deux stations de eVelib sont les mêmes")
 
-        return models.Point(latA, longA), models.Point(latB, longB)
+        return Point(latA, longA), Point(latB, longB)
 
 class BirdItinerary(IndirectItinerary):
 
@@ -377,7 +369,7 @@ class BirdItinerary(IndirectItinerary):
         super().__init__(start, end)
 
     def budget(self):
-        return bird_cost(self.routes[1].duration)
+        return bird.cost(self.routes[1].duration)
 
     def __str__(self):
         Aff = "Première étape:" + str(self.routes[0])
@@ -386,7 +378,7 @@ class BirdItinerary(IndirectItinerary):
         return Aff
 
     def __FindScooter(self, start):
-        scooter_lat, scooter_long = bird_find_scooter(start.lat, start.long)
-        return models.Point(scooter_lat, scooter_long)
+        scooter_lat, scooter_long = bird.find_scooter(start.lat, start.long)
+        return Point(scooter_lat, scooter_long)
 
 

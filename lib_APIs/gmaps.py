@@ -1,13 +1,14 @@
 from dotenv import load_dotenv
-import os
 load_dotenv()
+from os import getenv
+
 import googlemaps
 
 #function to find the itinerary in transit thanks to Maps API
-def gmaps_transit_itinerary(start, end):
+def transit_itinerary(start, end):
     duration, distance, geojson = 0, 0, {}
 
-    gmaps = googlemaps.Client(key=os.getenv("GOOGLE_MAPS_API_KEY"))
+    gmaps = googlemaps.Client(key=getenv("GOOGLE_MAPS_API_KEY"))
     # Request directions via public transit (GoogleMaps)
     directions_result = gmaps.directions(start.to_LatLong(), end.to_LatLong(), mode="transit")
 

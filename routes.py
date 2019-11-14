@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, json
 from models import *
-from lib.weather import *
+from lib_APIs.accuweather import *
 import time
 import datetime
 

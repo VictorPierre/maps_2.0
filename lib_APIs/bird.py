@@ -1,17 +1,19 @@
 from dotenv import load_dotenv
-import os
 load_dotenv()
+from os import getenv
+
 import requests
 from math import ceil
-from lib.Exception import *
+
+from .exceptions import *
 
 #function which gives the location of the closest bird scooter
 
-def bird_find_scooter(lat,long):
+def find_scooter(lat,long):
     url = "https://api.birdapp.com/bird/nearby"
     params = {"latitude": lat, "longitude": long, "radius": "1000"}
     headers = {
-        'Authorization': os.getenv("BIRD_KEY"),
+        'Authorization': getenv("BIRD_KEY"),
         'Device-id': "123E4567-E89B-12D3-A456-426655440780",
         'App-Version': "4.41.0",
         'Location': "{\"latitude\":"+str(lat)+",\"longitude\":"+str(long)+",\"altitude\":500,\"accuracy\":100,\"speed\":-1,\"heading\":-1}",
@@ -28,7 +30,7 @@ def bird_find_scooter(lat,long):
     return(scooter_location['latitude'],scooter_location['longitude'])
 
 #retourne le coût en euros pour une durée de trajet en minute
-def bird_cost(duration):
+def cost(duration):
     return 1 + 0.25*ceil(duration/60)
 
 #print(bird_find_scooter(48.83278,2.33800))
