@@ -1,138 +1,8 @@
 from flask import render_template
 import numpy as np
-from threading import Thread
-from multiprocessing import Queue
-from statistics import *
 
 from .point import Point
 from lib_APIs import *
-
-##Class that contains all the different routes for a given start and end
-import time
-import datetime
-
-class ItineraryFactory:
-    def __init__(self):
-        self._builders = {
-            "foot": FootItinerary,
-            "bike": BikeItinerary,
-            "electric_bike": ElectricBikeItinerary,
-            "velib": VelibItinerary,
-            "e-velib": eVelibItinerary,
-            # "transit": TransitItinerary,
-            "car": CarItinerary,
-            "bird": BirdItinerary,
-        }
-        self._sort_methods = {
-            "duration": self.sort_by_duration,
-            "distance": self.sort_by_distance,
-            "co2": self.sort_by_co2,
-            "calories": self.sort_by_calories_asc,
-            "sport": self.sort_by_calories_des,
-        }
-        self.routes = []
-
-    def json(self):
-        json = []
-        for route in self.routes:
-            json.append(route.json())
-        return json
-
-    def generate_route(self, type, start, end, out_queue):
-        builder = self._builders.get(type)
-        if builder is None:
-            raise ValueError(type)
-        try :
-            out_queue.put(builder(start, end))
-        except (exceptions.SameStation, ValueError, exceptions.ApiException) as e:
-            print("Impossible de générer l'itinéraire :")
-            print(e)
-
-
-    def generate_all_routes_threads_json(self, start, end):
-        my_queue=Queue()
-        threads=[]
-        tmpsstart=[]
-        tmpsend=[]
-        tmpsdiff=[]
-        tmpssum=datetime.timedelta()
-
-        #Creation des threads pour chaque type d'itinéraire
-        for builder in self._builders:
-            thread = Thread(target=self.generate_route, args=(builder,start,end,my_queue,))
-            threads.append(thread)
-
-        #Démarrage de chaque thread
-        for thread in threads:
-            tmpsstart.append(datetime.datetime.now())
-            thread.start()
-
-        #Pour chaque thread on précise la nécessité d'attendre les autres avant d'avancer
-        for thread in threads:
-            thread.join()
-            tmpsend.append(datetime.datetime.now())
-
-        #Vérification de la pertinence temporelle du multi-thread
-        #for i in range (len(tmpsstart)):
-         #   tmpsdiff.append(tmpsend[i]-tmpsstart[i])
-         #   tmpssum+=tmpsdiff[-1]
-        #print("La sommation des temps totaux pour l'appel et le retour aux APIs pour est de {}".format(tmpssum))
-
-        #tmps1 = datetime.datetime.now()
-
-        #Reprend les infos dans la queue venant des threads
-        while int(my_queue.qsize())>0 :
-
-            self.routes.append(my_queue.get())
-        #tmps2 = datetime.datetime.now()
-        #print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
-
-    def sort(self, choix):
-        sortmethod = self._sort_methods.get(choix)
-        if sortmethod is None :
-            raise ValueError(choix)
-        sortmethod()
-
-
-    def sort_by_duration(self):
-        self.routes.sort(key=lambda x: x.duration, reverse=False)
-        pass
-    def sort_by_distance(self):
-        self.routes.sort(key=lambda x: x.distance, reverse=False)
-        pass
-    def sort_by_co2(self):
-        self.routes.sort(key=lambda x: x.carbon_emission(), reverse=False)
-        pass
-    def sort_by_calories_asc(self):
-        self.routes.sort(key=lambda x: x.calories(), reverse=False)
-        pass
-    def sort_by_calories_des(self):
-        self.routes.sort(key=lambda x: x.calories(), reverse=True)
-        pass
-
-    def sort_by_grade(self):
-        self.routes.sort(key=lambda x: x.grade, reverse=False)
-
-
-
-    def grade(self, choix):
-        grademethod = self._grade_methods.get(choix)
-        if grademethod is None:
-            raise ValueError(choix)
-        grademethod()
-
-    def grade_by_duration(self):
-        duration = [route.distance for route in self.routes]
-        print(duration)
-        pass
-
-    #def grade_by_distance(self):
-     #   self.routes.mean(key=lambda x: x.distance, reverse=False)
-      #  pass
-
-
-
-
 
 class Itinerary:
     """
@@ -153,7 +23,7 @@ class Itinerary:
     - json(self) -> json (return a JSON containing the geojson + an HTML preview of the itinerary)
     """
 
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.cost_per_km=10 #Très conservatif en cas de manque d'information
         self.fixed_cost=5 #Très conservatif en cas de manque d'information
         self.C02_per_km=0 #Si on n'a pas d'information on va partir du principe que la production de C02 est faible (transport en commun, etc...)
@@ -215,7 +85,7 @@ class Itinerary:
 ###ITINERAIRES DIRECTS : pas besoin de transiter par une station
 
 class FootItinerary(Itinerary):
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.itinerary_name = "à pied"
         self.picture_name = "walker.jpeg"
         self.calories_per_hour = 168
@@ -229,7 +99,7 @@ class FootItinerary(Itinerary):
 
 
 class BikeItinerary(Itinerary):
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en vélo"
         self.picture_name = "bicycle.png"
         self.calories_per_hour = 300
@@ -244,7 +114,7 @@ class BikeItinerary(Itinerary):
         return 0
 
 class ElectricBikeItinerary(Itinerary):
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en vélo électrique"
         self.picture_name = "electric-bike.png"
         self.calories_per_hour = 100
@@ -258,7 +128,7 @@ class ElectricBikeItinerary(Itinerary):
         return 0
 
 class CarItinerary(Itinerary):
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en voiture"
         self.picture_name = "car-compact.png"
         self.calories_per_hour = 0
@@ -272,7 +142,7 @@ class CarItinerary(Itinerary):
 
 
 class TransitItinerary(Itinerary):
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en transports en commun"
         self.picture_name = "bus.png"
         self.calories_per_hour = 0
@@ -287,7 +157,7 @@ class TransitItinerary(Itinerary):
 ###ITINERAIRES INDIRECTS : listes d'itinéraires directs
 class IndirectItinerary(Itinerary):
 
-    def __init__(self , start, end):
+    def __init__(self , start, end, **kwargs):
         self.distance = sum([route.distance for route in self.routes])
         self.duration = sum([route.duration for route in self.routes])
         self.geojson = [route.geojson for route in self.routes]
@@ -303,7 +173,7 @@ class IndirectItinerary(Itinerary):
 
 class VelibItinerary(IndirectItinerary):
 
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.itinerary_name = "Vélib"
         self.picture_name = "bicycle.png"
         (stationA, stationB) = self.__GiveStations(start, end)
@@ -330,7 +200,7 @@ class VelibItinerary(IndirectItinerary):
 
 class eVelibItinerary(IndirectItinerary):
 
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.itinerary_name = "e-velib"
         self.picture_name = "electric-bike.png"
         (stationA, stationB) = self.__GiveStations(start, end)
@@ -359,7 +229,7 @@ class eVelibItinerary(IndirectItinerary):
 
 class BirdItinerary(IndirectItinerary):
 
-    def __init__(self, start, end):
+    def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en trotinette bird"
         self.picture_name = "scooter.png"
 

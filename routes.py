@@ -1,8 +1,11 @@
-from flask import Flask, render_template, request, json
-from models import *
-from lib_APIs.accuweather import *
 import time
 import datetime
+from flask import Flask, render_template, request, json
+
+from models.itinerary_factory import *
+from models.point import *
+from lib_APIs import accuweather
+
 
 
 app = Flask(__name__)
@@ -10,27 +13,31 @@ app = Flask(__name__)
 ##Index page
 @app.route('/')
 def index():
-    return render_template('index.html', HasPrecipitation=HasPrecipitation())
+    return render_template('index.html', HasPrecipitation=accuweather.HasPrecipitation())
 
 ##calculate itinerary from form
 @app.route('/', methods = ['POST'])
 def calculate_itinerary():
-    #Recover start & end points from the form
-    start_lat = request.form.get('start_lat', type=float)
-    start_long = request.form.get('start_long', type=float)
-    end_lat = request.form.get('end_lat', type=float)
-    end_long = request.form.get('end_long', type=float)
+    #Recover form parameters
+    start = Point(request.form.get('start_lat', type=float), request.form.get('start_long', type=float))
+    end = Point(request.form.get('end_lat', type=float), request.form.get('end_long', type=float))
+
     choix = request.form.get('choice')
 
-    #Calculate the best itinerary
-    start = Point(start_lat, start_long)
-    end = Point(end_lat, end_long)
+    kwargs = {
+        "accessible": request.form.get('accessible') != None,
+        "avoid_rain": request.form.get('avoid_rain') != None,
+        "loaded": request.form.get('loaded') != None,
+    }
+
+
+
 
     routes = ItineraryFactory()
     tmps1 = datetime.datetime.now()
 
     #fact.generate_all_routes(start, end) #non multi_thread           # Temps d'execution 0:00:02.472217
-    routes.generate_all_routes_threads_json(start, end)#multi_thread # Temps d'execution 0:00:01.599014
+    routes.generate_all_routes(start, end, **kwargs)#multi_thread # Temps d'execution 0:00:01.599014
 
 
     routes.sort(choix)
