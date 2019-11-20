@@ -35,6 +35,10 @@ $( document ).ready(function() {
         $("#options>div").toggle();
     });
 
+    $("#form input:not([type=hidden]), #form select").on('change', function() {
+        $("#form").submit()
+    });
+
     //Form submission
     $("#form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
