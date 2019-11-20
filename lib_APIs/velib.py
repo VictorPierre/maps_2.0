@@ -35,7 +35,7 @@ def closest_evelib_station(lat,long):
         'https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&exclude.nbebike=0&geofilter.distance=' + str(
             lat) + '%2C+' + str(long) + '%2C+1000')
     if reponse.status_code != 200 :
-        raise ApiException ('API Vélib ne répond pas')
+        raise ApiException ('API Vélib ne répond pas\n{}'.format(str(reponse.json())))
     resp = reponse.json()
     if resp['nhits'] == 0:
         raise ValueError("Pas de station eVelib dans la zone")

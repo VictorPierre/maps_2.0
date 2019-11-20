@@ -2,6 +2,7 @@ from flask import render_template
 import numpy as np
 
 from .point import Point
+from .exceptions import *
 from lib_APIs import *
 
 class Itinerary:
@@ -38,6 +39,7 @@ class Itinerary:
         self.calories_per_hour=0 #Si on a pas d'information on va partir du principe que cela n'est pas une activité sportive
         self.rain_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter en cas de pluie
         self.disability_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
+        self.loaded_compatible=False
 
     def budget(self):
         """
@@ -70,6 +72,19 @@ class Itinerary:
             "html": self.__html(),
             "geojson": self.geojson,
         }
+
+    def _check_compatibility(self, **kwargs):
+        """
+        check if the itinerary is possible given the parameters, and raise error otherwise
+        :param kwargs:
+        :return:
+        """
+        if kwargs.get("disability_compatible")==True and not self.disability_compatible:
+            raise DisabilityCompatibleException("Impossible de faire de ce moyen de transport en fauteuil roulant")
+        if kwargs.get("rain_compatible") == True and not self.rain_compatible:
+            raise RainCompatibleException("Ce moyen de transport mouille sous la pluie")
+        if kwargs.get("loaded_compatible") == True and not self.loaded_compatible:
+            raise LoadedCompatibleException("Impossible de transporter des charges de cette façon")
 
     def __html(self):
         """
@@ -128,6 +143,9 @@ class FootItinerary(Itinerary):
         self.C02_per_km = 16
         self.rain_compatible = True
         self.disability_compatible = True
+        self.loaded_compatible = True
+
+        self._check_compatibility(**kwargs)
         (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "foot-walking")
 
     def budget(self):
@@ -146,6 +164,9 @@ class BikeItinerary(Itinerary):
         self.C02_per_km = 21
         self.rain_compatible = False
         self.disability_compatible = False
+        self.loaded_compatible = False
+
+        self._check_compatibility(**kwargs)
         (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "cycling-regular")
         ##Green color for the geojson
         self.geojson["properties"]["color"]="#026928"
@@ -159,12 +180,17 @@ class ElectricBikeItinerary(Itinerary):
     The route is generated with openrouteservice
     """
     def __init__(self, start, end, **kwargs):
+        if kwargs.get("disability_compatible")==True:
+            raise DisabilityCompatibleException("Impossible de faire du vélo électrique en fauteuil roulant")
         self.itinerary_name = "en vélo électrique"
         self.picture_name = "electric-bike.png"
         self.calories_per_hour = 100
         self.C02_per_km = 22
         self.rain_compatible = False
         self.disability_compatible = False
+        self.loaded_compatible = True
+
+        self._check_compatibility(**kwargs)
         (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "cycling-electric")
         ##Red color for the geojson
         self.geojson["properties"]["color"]="#AA0115"
@@ -183,6 +209,9 @@ class CarItinerary(Itinerary):
         self.C02_per_km = 271
         self.rain_compatible = True
         self.disability_compatible = True
+        self.loaded_compatible = True
+
+        self._check_compatibility(**kwargs)
         (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "driving-car")
         self.geojson["properties"]["color"]="#AA0115"
     def budget(self): ##TO DO
@@ -201,6 +230,9 @@ class TransitItinerary(Itinerary):
         self.C02_per_km = 101
         self.rain_compatible = True
         self.disability_compatible = True ##TO DO
+        self.loaded_compatible = True
+
+        self._check_compatibility(**kwargs)
         (self.duration, self.distance, self.geojson) = gmaps.transit_itinerary(start, end)
     def budget(self): ##TO DO
         return 1.90
@@ -211,13 +243,13 @@ class IndirectItinerary(Itinerary):
     INDIRECT ITINERARIES : an indirect itinerary is a list of direct itineraries
     (ex: walk for 5min and tke a bike for 10min)
     """
-
     def __init__(self , start, end, **kwargs):
         self.distance = sum([route.distance for route in self.routes])
         self.duration = sum([route.duration for route in self.routes])
         self.geojson = [route.geojson for route in self.routes]
         self.disability_compatible = np.all([route.disability_compatible for route in self.routes])
         self.rain_compatible = np.all([route.rain_compatible for route in self.routes])
+        self.loaded_compatible = np.all([route.loaded_compatible for route in self.routes])
 
     def calories(self):
         return sum([route.calories() for route in self.routes])
@@ -235,7 +267,7 @@ class VelibItinerary(IndirectItinerary):
         self.itinerary_name = "Vélib"
         self.picture_name = "bicycle.png"
         (stationA, stationB) = self.__GiveStations(start, end)
-        self.routes = [FootItinerary(start,stationA), BikeItinerary(stationA, stationB), FootItinerary(stationB,end)]
+        self.routes = [FootItinerary(start,stationA, **kwargs), BikeItinerary(stationA, stationB, **kwargs), FootItinerary(stationB,end, **kwargs)]
         super().__init__(start, end)
 
     def budget(self):
@@ -265,8 +297,8 @@ class eVelibItinerary(IndirectItinerary):
         self.itinerary_name = "e-velib"
         self.picture_name = "electric-bike.png"
         (stationA, stationB) = self.__GiveStations(start, end)
-        self.routes = [FootItinerary(start, stationA), ElectricBikeItinerary(stationA, stationB),
-                       FootItinerary(stationB, end)]
+        self.routes = [FootItinerary(start, stationA, **kwargs), ElectricBikeItinerary(stationA, stationB, **kwargs),
+                       FootItinerary(stationB, end, **kwargs)]
 
         super().__init__(start, end)
 
@@ -298,7 +330,7 @@ class BirdItinerary(IndirectItinerary):
         self.picture_name = "scooter.png"
 
         scooter = self.__FindScooter(start)
-        self.routes = [FootItinerary(start,scooter), ElectricBikeItinerary(scooter, end)]
+        self.routes = [FootItinerary(start,scooter, **kwargs), ElectricBikeItinerary(scooter, end, **kwargs)]
         ## to do : change speed (scooter is slower than a bike)
         super().__init__(start, end)
 

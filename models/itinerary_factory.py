@@ -5,6 +5,7 @@ from multiprocessing import Queue
 from statistics import *
 
 from .itinerary import *
+from .exceptions import *
 from lib_APIs.exceptions import *
 
 class ItineraryFactory:
@@ -42,8 +43,10 @@ class ItineraryFactory:
         if builder is None:
             raise ValueError(type)
         try:
-            out_queue.put(builder(start, end))
-        except (SameStation, ValueError, ApiException) as e:
+            out_queue.put(builder(start, end, **kwargs))
+        except (RainCompatibleException, LoadedCompatibleException, DisabilityCompatibleException, SameStation) as e:
+            print(e)
+        except (ValueError, ApiException) as e:
             print("Impossible de générer l'itinéraire :")
             print(e)
 
@@ -119,7 +122,7 @@ class ItineraryFactory:
             raise ValueError(choix)
         grademethod()
 
-    def __grade_by_duration(self):
+    def grade_by_duration(self):
         duration = [route.distance for route in self.routes]
         print(duration)
         pass
