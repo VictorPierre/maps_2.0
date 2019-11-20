@@ -4,8 +4,13 @@ from os import getenv
 
 import googlemaps
 
-#function to find the itinerary in transit thanks to Maps API
 def transit_itinerary(start, end):
+    """
+    function to find the itinerary in transit thanks to Maps API
+    :param start:
+    :param end:
+    :return:
+    """
     duration, distance, geojson = 0, 0, {}
 
     gmaps = googlemaps.Client(key=getenv("GOOGLE_MAPS_API_KEY"))
@@ -26,8 +31,12 @@ def transit_itinerary(start, end):
 
     return duration, distance, steps
 
-#function to convert the answer of Maps API into a geojson object
 def gmaps_to_geojson(steps):
+    """
+    function to convert the answer of Maps API into a geojson object
+    :param steps:
+    :return:
+    """
     geojson = []
     for step in steps:
         if step["travel_mode"]=="TRANSIT":

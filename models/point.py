@@ -3,8 +3,10 @@ from dotenv import load_dotenv
 load_dotenv()
 from os import getenv
 
-#class that contains objects Point with latitude, longitude and adress as attributes
 class Point:
+    """
+    class that contains objects Point with latitude, longitude and adress as attributes
+    """
     def __init__(self, lat=None, long=None, address=None):
         if address is None:
             self.lat = lat

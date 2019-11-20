@@ -7,9 +7,15 @@ from math import ceil
 
 from .exceptions import *
 
-#function which gives the location of the closest bird scooter
 
 def find_scooter(lat,long):
+    """
+    function which gives the location of the closest bird scooter
+    :param lat:
+    :param long:
+    :return (lat, long): tuple of string
+    """
+
     url = "https://api.birdapp.com/bird/nearby"
     params = {"latitude": lat, "longitude": long, "radius": "1000"}
     headers = {
@@ -29,8 +35,12 @@ def find_scooter(lat,long):
     scooter_location = resp['birds'][0]["location"]
     return(scooter_location['latitude'],scooter_location['longitude'])
 
-#retourne le coût en euros pour une durée de trajet en minute
 def cost(duration):
+    """
+    retourne le coût en euros pour une durée de trajet en minute
+    :param duration: integer, in minutes
+    :return cost: integer, in euros
+    """
     return 1 + 0.25*ceil(duration/60)
 
 #print(bird_find_scooter(48.83278,2.33800))

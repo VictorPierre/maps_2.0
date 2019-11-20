@@ -1,7 +1,12 @@
-#Exception when the API request is not successful
+
 class ApiException(Exception):
+    """
+    Exception when the API request is not successful
+    """
     pass
 
-#Exception when the closest V-lib_APIs stations of the start and of the end are the same
 class SameStation(Exception):
+    """
+    Exception when the closest V-lib_APIs stations of the start and of the end are the same
+    """
     pass

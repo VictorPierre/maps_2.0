@@ -18,12 +18,20 @@ class Itinerary:
 
     METHODS :
     - budget(self) -> float (return the cost in €)
-    - carbon_emission(self) -> float (return the CO2 emissions in kg)  source : http://www.cyclic.info/le-velo-a-assistance-electrique-est-il-polluant/
+    - carbon_emission(self) -> float (return the CO2 emissions in kg)
     - calories(self) -> float (return the amount of kcal)
     - json(self) -> json (return a JSON containing the geojson + an HTML preview of the itinerary)
     """
 
     def __init__(self, start, end, **kwargs):
+        """
+        :param start: point
+        :param end: point
+
+        :param rain_compatible: boolean, default : false
+        :param disability_compatible: boolean, default : false
+        :param loaded_compatible: boolean, default : false
+        """
         self.cost_per_km=10 #Très conservatif en cas de manque d'information
         self.fixed_cost=5 #Très conservatif en cas de manque d'information
         self.C02_per_km=0 #Si on n'a pas d'information on va partir du principe que la production de C02 est faible (transport en commun, etc...)
@@ -32,21 +40,42 @@ class Itinerary:
         self.disability_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
 
     def budget(self):
+        """
+        Give the cost (€) for the itinerary
+        :return: float
+        """
         return float(self.fixed_cost) + float(self.distance)*float(self.cost_per_km)
 
     def carbon_emission(self):
+        """
+        Give the CO2 emissions in kg
+        (source : http://www.cyclic.info/le-velo-a-assistance-electrique-est-il-polluant/)
+        :return: float
+        """
         return float(self.distance)/1000*float(self.C02_per_km)
 
     def calories(self):
+        """
+        Return the amount of kcal
+        :return: float
+        """
         return float(self.calories_per_hour)*float(self.duration)/3600
 
     def json(self):
+        """
+        Give a JSON containing the geojson + an HTML preview of the itinerary
+        :return:json
+        """
         return {
             "html": self.__html(),
             "geojson": self.geojson,
         }
 
     def __html(self):
+        """
+        Generate an html for rendering the itinerary
+        :return:
+        """
         return render_template('show.html',
                         name=self.itinerary_name,
                         picture_name = self.picture_name,
@@ -59,16 +88,22 @@ class Itinerary:
                         calories = str(round(self.calories())) + " Kcal",
                         )
 
-    #Convert self.distance into a pretty format
     def __meter_to_km(self):
+        """
+        Convert self.distance into a pretty format
+        :return:
+        """
         distance = int(self.distance)
         if distance < 1000 :
             return str(distance) + "m"
         else:
             return str(round(distance / 1000, 1)) + "km"
 
-    # Convert self.duration into a pretty format
     def __sec_to_time(self):
+        """
+        Convert self.duration into a pretty format
+        :return:
+        """
         time = int(self.duration)
         heure = time//3600
         minute = int((time-heure*3600)//60)
@@ -82,9 +117,10 @@ class Itinerary:
             return str(heure)+"h"+str(minute)+"mn"
 
 
-###ITINERAIRES DIRECTS : pas besoin de transiter par une station
-
 class FootItinerary(Itinerary):
+    """
+    ITINERAIRES DIRECTS : pas besoin de transiter par une station
+    """
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "à pied"
         self.picture_name = "walker.jpeg"
@@ -99,6 +135,10 @@ class FootItinerary(Itinerary):
 
 
 class BikeItinerary(Itinerary):
+    """
+    Bike itinerary : itinerary using user's own bike.
+    The route is generated with openrouteservice
+    """
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en vélo"
         self.picture_name = "bicycle.png"
@@ -114,6 +154,10 @@ class BikeItinerary(Itinerary):
         return 0
 
 class ElectricBikeItinerary(Itinerary):
+    """
+    e-bike itinerary : itinerary using user's own e-bike.
+    The route is generated with openrouteservice
+    """
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en vélo électrique"
         self.picture_name = "electric-bike.png"
@@ -128,6 +172,10 @@ class ElectricBikeItinerary(Itinerary):
         return 0
 
 class CarItinerary(Itinerary):
+    """
+    Car itinerary : itinerary using user's own car.
+    The route is generated with openrouteservice
+    """
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en voiture"
         self.picture_name = "car-compact.png"
@@ -142,6 +190,10 @@ class CarItinerary(Itinerary):
 
 
 class TransitItinerary(Itinerary):
+    """
+    Transit itinerary : itinerary using RATP buses, metros and RERs.
+    The route is generated with googlemaps
+    """
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en transports en commun"
         self.picture_name = "bus.png"
@@ -154,8 +206,11 @@ class TransitItinerary(Itinerary):
         return 1.90
 
 
-###ITINERAIRES INDIRECTS : listes d'itinéraires directs
 class IndirectItinerary(Itinerary):
+    """
+    INDIRECT ITINERARIES : an indirect itinerary is a list of direct itineraries
+    (ex: walk for 5min and tke a bike for 10min)
+    """
 
     def __init__(self , start, end, **kwargs):
         self.distance = sum([route.distance for route in self.routes])
@@ -172,7 +227,10 @@ class IndirectItinerary(Itinerary):
         return sum([route.carbon_emission() for route in self.routes])
 
 class VelibItinerary(IndirectItinerary):
-
+    """
+    Velib itinerary : itinerary using velibs
+    User will walk to the closest non empty station, take a velib and leave it in a non full station
+    """
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "Vélib"
         self.picture_name = "bicycle.png"
@@ -199,7 +257,10 @@ class VelibItinerary(IndirectItinerary):
 
 
 class eVelibItinerary(IndirectItinerary):
-
+    """
+    e-Velib itinerary : itinerary using electric velibs
+    User will walk to the closest non empty station, take a e-velib and leave it in a non full station
+    """
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "e-velib"
         self.picture_name = "electric-bike.png"
@@ -228,7 +289,10 @@ class eVelibItinerary(IndirectItinerary):
         return Point(latA, longA), Point(latB, longB)
 
 class BirdItinerary(IndirectItinerary):
-
+    """
+    Birditinerary : itinerary using Bird scooter
+    User will walk to the closest free bird scooter, and leave at his destination
+    """
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en trotinette bird"
         self.picture_name = "scooter.png"

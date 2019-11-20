@@ -5,8 +5,11 @@ import requests
 from .exceptions import *
 
 
-#function that returns a boolean to know if there is going to have any precipitation in the following hour
+#
 def HasPrecipitation():
+    """
+    Function that returns a boolean to know if there is going to have any precipitation in the following hour
+    """
     url = "http://dataservice.accuweather.com/forecasts/v1/hourly/12hour/623?"
     data = {"apikey": getenv("WEATHER_API_KEY")}
     reponse = requests.get(url, params=data)

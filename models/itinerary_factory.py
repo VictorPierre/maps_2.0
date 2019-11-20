@@ -5,10 +5,12 @@ from multiprocessing import Queue
 from statistics import *
 
 from .itinerary import *
-from lib_APIs import exceptions
+from lib_APIs.exceptions import *
 
-##Class that contains all the different routes for a given start and end
 class ItineraryFactory:
+    """
+    Class that contains all the different routes for a given start and end
+    """
     def __init__(self):
         self._builders = {
             "foot": FootItinerary,
@@ -21,11 +23,11 @@ class ItineraryFactory:
             "bird": BirdItinerary,
         }
         self._sort_methods = {
-            "duration": self.sort_by_duration,
-            "distance": self.sort_by_distance,
-            "co2": self.sort_by_co2,
-            "calories": self.sort_by_calories_asc,
-            "sport": self.sort_by_calories_des,
+            "duration": self.__sort_by_duration,
+            "distance": self.__sort_by_distance,
+            "co2": self.__sort_by_co2,
+            "calories": self.__sort_by_calories_asc,
+            "sport": self.__sort_by_calories_des,
         }
         self.routes = []
 
@@ -41,7 +43,7 @@ class ItineraryFactory:
             raise ValueError(type)
         try:
             out_queue.put(builder(start, end))
-        except (exceptions.SameStation, ValueError, exceptions.ApiException) as e:
+        except (SameStation, ValueError, ApiException) as e:
             print("Impossible de générer l'itinéraire :")
             print(e)
 
@@ -91,22 +93,22 @@ class ItineraryFactory:
         sortmethod()
 
 
-    def sort_by_duration(self):
+    def __sort_by_duration(self):
         self.routes.sort(key=lambda x: x.duration, reverse=False)
         pass
-    def sort_by_distance(self):
+    def __sort_by_distance(self):
         self.routes.sort(key=lambda x: x.distance, reverse=False)
         pass
-    def sort_by_co2(self):
+    def __sort_by_co2(self):
         self.routes.sort(key=lambda x: x.carbon_emission(), reverse=False)
         pass
-    def sort_by_calories_asc(self):
+    def __sort_by_calories_asc(self):
         self.routes.sort(key=lambda x: x.calories(), reverse=False)
         pass
-    def sort_by_calories_des(self):
+    def __sort_by_calories_des(self):
         self.routes.sort(key=lambda x: x.calories(), reverse=True)
         pass
-    def sort_by_grade(self):
+    def __sort_by_grade(self):
         self.routes.sort(key=lambda x: x.grade, reverse=False)
 
 
@@ -117,12 +119,12 @@ class ItineraryFactory:
             raise ValueError(choix)
         grademethod()
 
-    def grade_by_duration(self):
+    def __grade_by_duration(self):
         duration = [route.distance for route in self.routes]
         print(duration)
         pass
 
-    #def grade_by_distance(self):
+    #def __grade_by_distance(self):
      #   self.routes.mean(key=lambda x: x.distance, reverse=False)
       #  pass
 

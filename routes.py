@@ -23,22 +23,16 @@ def calculate_itinerary():
     end = Point(request.form.get('end_lat', type=float), request.form.get('end_long', type=float))
 
     choix = request.form.get('choice')
-
     kwargs = {
-        "accessible": request.form.get('accessible') != None,
-        "avoid_rain": request.form.get('avoid_rain') != None,
-        "loaded": request.form.get('loaded') != None,
+        "disability_compatible": request.form.get('accessible') != None,
+        "rain_compatible": request.form.get('avoid_rain') != None,
+        "loaded_compatible": request.form.get('loaded') != None,
     }
-
-
-
 
     routes = ItineraryFactory()
     tmps1 = datetime.datetime.now()
 
-    #fact.generate_all_routes(start, end) #non multi_thread           # Temps d'execution 0:00:02.472217
     routes.generate_all_routes(start, end, **kwargs)#multi_thread # Temps d'execution 0:00:01.599014
-
 
     routes.sort(choix)
     routes.grade_by_duration()

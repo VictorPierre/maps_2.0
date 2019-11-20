@@ -4,8 +4,16 @@ from os import getenv
 import requests
 from .exceptions import *
 
-#function to get itinerary in car, electric bike, bike, scooter or walking thanks to openrouteservice API
 def itinerary(start, end, means_of_transport,open_route_api_key=getenv("OPEN_ROUTE_SERVICE_API_KEY")):
+    """
+    function to get itinerary in car, electric bike, bike, scooter or walking thanks to openrouteservice API
+    :param start:
+    :param end:
+    :param means_of_transport:
+    :param open_route_api_key:
+    :return:
+    """
+
     duration, distance, geojson = 0, 0, {}
     ##Call the API only if the start and end are 2 different points
     if not start == end:
