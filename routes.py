@@ -35,7 +35,7 @@ def calculate_itinerary():
     routes.generate_all_routes(start, end, **kwargs)#multi_thread # Temps d'execution 0:00:01.599014
 
     routes.sort(choix)
-    routes.grade_by_duration()
+
     routes_json = routes.json()
 
     tmps2 = datetime.datetime.now()

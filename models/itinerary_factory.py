@@ -29,6 +29,7 @@ class ItineraryFactory:
             "co2": self.__sort_by_co2,
             "calories": self.__sort_by_calories_asc,
             "sport": self.__sort_by_calories_des,
+            "grade": self.__sort_by_grade,
         }
         self.routes = []
 
@@ -89,12 +90,13 @@ class ItineraryFactory:
         #tmps2 = datetime.datetime.now()
         #print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
 
+        self.__grade_all()
+
     def sort(self, choix):
         sortmethod = self._sort_methods.get(choix)
         if sortmethod is None :
             raise ValueError(choix)
         sortmethod()
-
 
     def __sort_by_duration(self):
         self.routes.sort(key=lambda x: x.duration, reverse=False)
@@ -112,24 +114,24 @@ class ItineraryFactory:
         self.routes.sort(key=lambda x: x.calories(), reverse=True)
         pass
     def __sort_by_grade(self):
-        self.routes.sort(key=lambda x: x.grade, reverse=False)
+        self.routes.sort(key=lambda x: x.grade, reverse=True)
 
+    def __grade(self, route, durations, calories, CO2, prices):
+        return -2*route.duration/max(durations) + route.calories()/max(calories) - route.carbon_emission()/max(CO2) - route.budget()/max(prices)
 
+    def __grade_all(self):
+        """
+        Methode qui génère une note pour chacune des routes
+        :return:
+        """
+        durations=[route.duration for route in self.routes]
+        calories=[route.calories() for route in self.routes]
+        CO2=[route.carbon_emission() for route in self.routes]
+        prices=[route.budget() for route in self.routes]
 
-    def grade(self, choix):
-        grademethod = self._grade_methods.get(choix)
-        if grademethod is None:
-            raise ValueError(choix)
-        grademethod()
+        for route in self.routes:
+            route.grade=self.__grade(route, durations, calories, CO2, prices)
 
-    def grade_by_duration(self):
-        duration = [route.distance for route in self.routes]
-        print(duration)
-        pass
-
-    #def __grade_by_distance(self):
-     #   self.routes.mean(key=lambda x: x.distance, reverse=False)
-      #  pass
 
 
 
