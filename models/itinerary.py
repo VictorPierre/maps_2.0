@@ -227,7 +227,7 @@ class CarItinerary(Itinerary):
         self.geojson["properties"]["color"]="#AA0115"
     def budget(self):
         #Sachant qu'une voiture moyenne consomme 6.33L/100km et que 1L côute environ 1.5€
-        return self.distance*1.5*6.33/100
+        return self.distance*1.5*6.33/100/1000
 
 
 class TransitItinerary(Itinerary):
