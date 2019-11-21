@@ -146,8 +146,10 @@ class FootItinerary(Itinerary):
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "à pied"
         self.picture_name = "walker.jpeg"
-        self.calories_per_hour = 168
-        self.C02_per_km = 16
+        # D'après fourchette-et-bikini.fr avec un poids moyen de 70kg
+        self.calories_per_hour = 245
+        # En prenant en compte qu'une calorie représente 0.2g de CO2 chez l'Homme avec une vitesse d'environ 5km/h
+        self.C02_per_km = 0.2*245/5
         self.grade=0
         self.labels = []
         self.rain_compatible = True
@@ -169,8 +171,10 @@ class BikeItinerary(Itinerary):
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en vélo"
         self.picture_name = "bicycle.png"
-        self.calories_per_hour = 300
-        self.C02_per_km = 21
+        # D'après fourchette-et-bikini.fr avec un poids moyen de 70kg et une vitesse moyenne de 20km/h
+        self.calories_per_hour = 560
+        # En prenant en compte qu'une calorie représente 0.2g de CO2 chez l'Homme et une vitesse d'environ 20km/h
+        self.C02_per_km = 560*0.2/20
         self.grade = 0
         self.labels = []
         self.rain_compatible = False
@@ -193,8 +197,11 @@ class ElectricBikeItinerary(Itinerary):
     def __init__(self, start, end, **kwargs):
         self.itinerary_name = "en vélo électrique"
         self.picture_name = "electric-bike.png"
-        self.calories_per_hour = 100
-        self.C02_per_km = 22
+        #On part de l'hypothèse que l'énergie nécessaire est équivalent à marcher pour 20km/h
+        self.calories_per_hour = 245
+        # En prenant en compte qu'une calorie représente 0.2g de CO2 chez l'Homme et une vitesse d'environ 20km/h pour le premier terme
+        # Sachant qu'un vélo éléctrique dépense 500Wh pour faire 120km, avec une vitesse de 20km/h, soit 500/6 Wh/h et que cette production génére 315g/kWh de CO2 en France
+        self.C02_per_km = 245*0.2/20 + 500*0.315/6
         self.grade = 0
         self.labels = []
         self.rain_compatible = False
@@ -217,7 +224,8 @@ class CarItinerary(Itinerary):
         self.itinerary_name = "en voiture"
         self.picture_name = "car-compact.png"
         self.calories_per_hour = 0
-        self.C02_per_km = 271
+        # Sachant qu'en moyenne une voiture produit 166g/km d'après transilien.fr
+        self.C02_per_km = 166
         self.grade = 0
         self.labels = []
         self.rain_compatible = True
@@ -227,8 +235,9 @@ class CarItinerary(Itinerary):
         self._check_compatibility(**kwargs)
         (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "driving-car")
         self.geojson["properties"]["color"]="#AA0115"
-    def budget(self): ##TO DO
-        return 0
+    def budget(self):
+        #Sachant qu'une voiture moyenne consomme 6.33L/100km et que 1L côute environ 1.5€
+        return self.distance*1.5*6.33/100/1000
 
 
 class TransitItinerary(Itinerary):
@@ -240,16 +249,18 @@ class TransitItinerary(Itinerary):
         self.itinerary_name = "en transports en commun"
         self.picture_name = "bus.png"
         self.calories_per_hour = 0
-        self.C02_per_km = 101
+        # D'après une moyenne pondérée par le nombre d'utilisateurs du Metro, RER, Tramway et Bus à Paris venant de transilien.fr pour la production de C02 par mode et de wikipedia pour la distribution
+        self.C02_per_km = 28
         self.grade = 0
         self.labels = []
         self.rain_compatible = True
-        self.disability_compatible = False ##TO DO
+        self.disability_compatible = False
         self.loaded_compatible = True
 
         self._check_compatibility(**kwargs)
         (self.duration, self.distance, self.geojson) = gmaps.transit_itinerary(start, end)
-    def budget(self): ##TO DO
+    def budget(self):
+        #Sachant que le prix d'un ticket à PAris Intra-muros est de 1.9€
         return 1.90
 
 

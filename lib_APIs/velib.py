@@ -43,6 +43,8 @@ def closest_evelib_station(lat,long):
     station_long = resp['records'][0]['fields']['geo'][1]
     return station_lat, station_long
 
+#On considère que la personne n'a pas d'abonnement Velib; le prix est alors ajusté à la demi-heure prise
+
 def velib_cost(duration):
     """
     function which calculates the cost for using a velib
