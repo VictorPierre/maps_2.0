@@ -180,8 +180,6 @@ class ElectricBikeItinerary(Itinerary):
     The route is generated with openrouteservice
     """
     def __init__(self, start, end, **kwargs):
-        if kwargs.get("disability_compatible")==True:
-            raise DisabilityCompatibleException("Impossible de faire du vélo électrique en fauteuil roulant")
         self.itinerary_name = "en vélo électrique"
         self.picture_name = "electric-bike.png"
         self.calories_per_hour = 100
@@ -229,7 +227,7 @@ class TransitItinerary(Itinerary):
         self.calories_per_hour = 0
         self.C02_per_km = 101
         self.rain_compatible = True
-        self.disability_compatible = True ##TO DO
+        self.disability_compatible = False ##TO DO
         self.loaded_compatible = True
 
         self._check_compatibility(**kwargs)

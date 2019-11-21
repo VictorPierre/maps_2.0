@@ -19,7 +19,7 @@ class ItineraryFactory:
             "electric_bike": ElectricBikeItinerary,
             "velib": VelibItinerary,
             "e-velib": eVelibItinerary,
-            # "transit": TransitItinerary,
+            "transit": TransitItinerary,
             "car": CarItinerary,
             "bird": BirdItinerary,
         }
