@@ -17,6 +17,9 @@
         <div>CO2: {{carbon_emission}}</div>
         <div>Calories : {{calories}}</div>
         <div>Note: {{grade}}</div>
+        {% for label in labels%}
+            <div>{{label}}</div>
+        {% endfor %}
     </div>
 </div>
 

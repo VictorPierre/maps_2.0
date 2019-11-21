@@ -85,12 +85,12 @@ class ItineraryFactory:
 
         #Reprend les infos dans la queue venant des threads
         while int(my_queue.qsize())>0 :
-
             self.routes.append(my_queue.get())
         #tmps2 = datetime.datetime.now()
         #print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
 
         self.__grade_all()
+        self.__set_labels()
 
     def sort(self, choix):
         sortmethod = self._sort_methods.get(choix)
@@ -117,6 +117,15 @@ class ItineraryFactory:
         self.routes.sort(key=lambda x: x.grade, reverse=True)
 
     def __grade(self, route, durations, calories, CO2, prices):
+        """
+        Calculates the grade of a route
+        :param route:
+        :param durations:
+        :param calories:
+        :param CO2:
+        :param prices:
+        :return:
+        """
         return -2*route.duration/max(durations) + route.calories()/max(calories) - route.carbon_emission()/max(CO2) - route.budget()/max(prices)
 
     def __grade_all(self):
@@ -132,7 +141,22 @@ class ItineraryFactory:
         for route in self.routes:
             route.grade=self.__grade(route, durations, calories, CO2, prices)
 
-
-
-
-
+    def __set_labels(self):
+        """
+        Create the labels 'fast', 'green' and 'athletic' for the best itineraries
+        :return:
+        """
+        if len(self.routes)==0:
+            return
+        else:
+            fastest_route, greenest_route, most_athletic_route = self.routes[0],self.routes[0],self.routes[0]
+            for route in self.routes:
+                if route.duration<fastest_route.duration:
+                    fastest_route=route
+                if route.carbon_emission()<greenest_route.carbon_emission():
+                    greenest_route=route
+                if route.calories()>most_athletic_route.calories():
+                    most_athletic_route=route
+            fastest_route.labels.append("fast")
+            most_athletic_route.labels.append("athletic")
+            greenest_route.labels.append("green")

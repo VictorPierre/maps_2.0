@@ -14,8 +14,11 @@ class Itinerary:
     - distance (int type, distance in meters)
     - duration (int type, duration in seconds)
     - geojson (dict, data for visualising the route)
+    - grade (our custom grade given considering carbon emissions, cost and duration
+    - labels ('green', 'fast', or 'athletic', help to identify best itineraries in a category)
     - rain_compatible (boolean)
     - disability_compatible (boolean)
+
 
     METHODS :
     - budget(self) -> float (return the cost in €)
@@ -37,6 +40,8 @@ class Itinerary:
         self.fixed_cost=5 #Très conservatif en cas de manque d'information
         self.C02_per_km=0 #Si on n'a pas d'information on va partir du principe que la production de C02 est faible (transport en commun, etc...)
         self.calories_per_hour=0 #Si on a pas d'information on va partir du principe que cela n'est pas une activité sportive
+        self.grade=0
+        self.labels=[]
         self.rain_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter en cas de pluie
         self.disability_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
         self.loaded_compatible=False
@@ -101,7 +106,8 @@ class Itinerary:
                         budget = str(round(self.budget(),2)) + " €",
                         carbon_emission= str(round(self.carbon_emission())) + " g",
                         calories = str(round(self.calories())) + " Kcal",
-                        grade = str(self.grade)
+                        grade = str(self.grade),
+                        labels = self.labels
                         )
 
     def __meter_to_km(self):
@@ -143,6 +149,7 @@ class FootItinerary(Itinerary):
         self.calories_per_hour = 168
         self.C02_per_km = 16
         self.grade=0
+        self.labels = []
         self.rain_compatible = True
         self.disability_compatible = True
         self.loaded_compatible = True
@@ -165,6 +172,7 @@ class BikeItinerary(Itinerary):
         self.calories_per_hour = 300
         self.C02_per_km = 21
         self.grade = 0
+        self.labels = []
         self.rain_compatible = False
         self.disability_compatible = False
         self.loaded_compatible = False
@@ -188,6 +196,7 @@ class ElectricBikeItinerary(Itinerary):
         self.calories_per_hour = 100
         self.C02_per_km = 22
         self.grade = 0
+        self.labels = []
         self.rain_compatible = False
         self.disability_compatible = False
         self.loaded_compatible = True
@@ -210,6 +219,7 @@ class CarItinerary(Itinerary):
         self.calories_per_hour = 0
         self.C02_per_km = 271
         self.grade = 0
+        self.labels = []
         self.rain_compatible = True
         self.disability_compatible = True
         self.loaded_compatible = True
@@ -232,6 +242,7 @@ class TransitItinerary(Itinerary):
         self.calories_per_hour = 0
         self.C02_per_km = 101
         self.grade = 0
+        self.labels = []
         self.rain_compatible = True
         self.disability_compatible = False ##TO DO
         self.loaded_compatible = True
@@ -271,6 +282,7 @@ class VelibItinerary(IndirectItinerary):
         self.itinerary_name = "Vélib"
         self.picture_name = "bicycle.png"
         self.grade = 0
+        self.labels = []
         (stationA, stationB) = self.__GiveStations(start, end)
         self.routes = [FootItinerary(start,stationA, **kwargs), BikeItinerary(stationA, stationB, **kwargs), FootItinerary(stationB,end, **kwargs)]
         super().__init__(start, end)
@@ -302,6 +314,7 @@ class eVelibItinerary(IndirectItinerary):
         self.itinerary_name = "e-velib"
         self.picture_name = "electric-bike.png"
         self.grade = 0
+        self.labels = []
         (stationA, stationB) = self.__GiveStations(start, end)
         self.routes = [FootItinerary(start, stationA, **kwargs), ElectricBikeItinerary(stationA, stationB, **kwargs),
                        FootItinerary(stationB, end, **kwargs)]
@@ -335,6 +348,7 @@ class BirdItinerary(IndirectItinerary):
         self.itinerary_name = "en trotinette bird"
         self.picture_name = "scooter.png"
         self.grade = 0
+        self.labels = []
         scooter = self.__FindScooter(start)
         self.routes = [FootItinerary(start,scooter, **kwargs), ElectricBikeItinerary(scooter, end, **kwargs)]
         ## to do : change speed (scooter is slower than a bike)
