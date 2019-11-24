@@ -39,26 +39,47 @@
                     <div class="toggleButton" style="display: block; margin-left: auto">Options</div>
                 </div>
                 <div id="options-content">
-                    <select name="choice" id="choice">
-                        <option value="grade">Notre recommendation</option>
-                        <option value="duration">Le plus rapide</option>
-                        <option value="distance" >Le plus court</option>
-                        <option value="co2">Le moins polluant</option>
-                        <option value="calories" >Le moins fatiguant</option>
-                        <option value="sport" >Le plus sportif</option>
-                    </select>
-                    <div class="checkboxes">
-                        <div>
-                          <input type="checkbox" id="accessible" name="accessible">
-                          <label for="accessible">Accessible PMR</label>
+                    <div class="row">
+                        <select name="choice" id="choice">
+                            <option value="grade">Notre recommendation</option>
+                            <option value="duration">Le plus rapide</option>
+                            <option value="distance" >Le plus court</option>
+                            <option value="co2">Le moins polluant</option>
+                            <option value="calories" >Le moins fatiguant</option>
+                            <option value="sport" >Le plus sportif</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="checkboxes_preferences">
+                            Préférences
+                            <div>
+                              <input type="checkbox" id="accessible" name="accessible">
+                              <label for="accessible">Accessible PMR</label>
+                            </div>
+                            <div>
+                              <input type="checkbox" id="avoid_rain" name="avoid_rain">
+                              <label for="avoid_rain">J'ai peur de la pluie</label>
+                            </div>
+                            <div>
+                              <input type="checkbox" id="loaded" name="loaded">
+                              <label for="loaded">Je porte une charge lourde</label>
+                            </div>
                         </div>
-                        <div>
-                          <input type="checkbox" id="avoid_rain" name="avoid_rain">
-                          <label for="avoid_rain">J'ai peur de la pluie</label>
-                        </div>
-                        <div>
-                          <input type="checkbox" id="loaded" name="loaded">
-                          <label for="loaded">Je porte une charge lourde</label>
+                        <div class="checkboxes_vehicles">
+                            Mes véhicules
+                            <input type="hidden" value="[]" id="forbidden_vehicles" name="forbidden_vehicles">
+                            <div>
+                              <input type="checkbox" id="bike" name="vehicles[]" value="bike" checked>
+                              <label for="bike">Vélo</label>
+                            </div>
+                            <div>
+                              <input type="checkbox" id="ebike" name="vehicles[]" value="e-bike" checked>
+                              <label for="ebike">Vélo électrique</label>
+                            </div>
+                            <div>
+                              <input type="checkbox" id="car" name="vehicles[]" value="car" checked>
+                              <label for="car">Voiture</label>
+                            </div>
                         </div>
                     </div>
                 </div>

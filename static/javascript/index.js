@@ -31,7 +31,7 @@ $( document ).ready(function() {
     });
 
     $(".toggleButton").on('click', function() {
-        $("#options-content").toggleClass('flex');
+        $("#options-content").toggle();
         $("#options>div").toggle();
     });
 
@@ -44,6 +44,12 @@ $( document ).ready(function() {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
         var url = form.attr('action');
+
+        //group non owned vehicles in an array
+        var forbidden_vehicles = [];
+        $("input:not(:checked)[name='vehicles[]']").each(function(){forbidden_vehicles.push($(this).val());});
+        $("#forbidden_vehicles").val(forbidden_vehicles)
+
         $.ajax({
             type: "POST",
             url: url,

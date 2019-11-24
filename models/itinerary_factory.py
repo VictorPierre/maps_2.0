@@ -55,7 +55,7 @@ class ItineraryFactory:
             raise ValueError(type)
         try:
             out_queue.put(builder(start, end, **kwargs))
-        except (RainCompatibleException, LoadedCompatibleException, DisabilityCompatibleException, SameStation) as e:
+        except (RainCompatibleException, LoadedCompatibleException, DisabilityCompatibleException, SameStation, ForbiddenVehicleException) as e:
             print(e)
         except (ValueError, ApiException) as e:
             print("Impossible de générer l'itinéraire :")
@@ -151,6 +151,8 @@ class ItineraryFactory:
         Methode qui génère une note pour chacune des routes
         :return:
         """
+        if len(self.routes)==0:
+            return
         durations=[route.duration for route in self.routes]
         calories=[route.calories() for route in self.routes]
         CO2=[route.carbon_emission() for route in self.routes]

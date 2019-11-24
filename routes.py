@@ -27,6 +27,7 @@ def calculate_itinerary():
         "disability_compatible": request.form.get('accessible') != None,
         "rain_compatible": request.form.get('avoid_rain') != None,
         "loaded_compatible": request.form.get('loaded') != None,
+        "forbidden_vehicles": request.form.get("forbidden_vehicles").split(',')
     }
 
     routes = ItineraryFactory()

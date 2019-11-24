@@ -90,6 +90,8 @@ class Itinerary:
             raise RainCompatibleException("Ce moyen de transport mouille sous la pluie")
         if kwargs.get("loaded_compatible") == True and not self.loaded_compatible:
             raise LoadedCompatibleException("Impossible de transporter des charges de cette façon")
+        if kwargs.get("forbidden_vehicles") and self.name in kwargs.get("forbidden_vehicles"):
+            raise ForbiddenVehicleException("Véhicule non autorisé pour cet utilisateur")
 
     def __html(self):
         """
@@ -144,6 +146,7 @@ class FootItinerary(Itinerary):
     ITINERAIRES DIRECTS : pas besoin de transiter par une station
     """
     def __init__(self, start, end, **kwargs):
+        self.name='foot'
         self.itinerary_name = "à pied"
         self.picture_name = "walker.jpeg"
         # D'après fourchette-et-bikini.fr avec un poids moyen de 70kg
@@ -169,6 +172,7 @@ class BikeItinerary(Itinerary):
     The route is generated with openrouteservice
     """
     def __init__(self, start, end, **kwargs):
+        self.name = 'bike'
         self.itinerary_name = "en vélo"
         self.picture_name = "bicycle.png"
         # D'après fourchette-et-bikini.fr avec un poids moyen de 70kg et une vitesse moyenne de 20km/h
@@ -195,6 +199,7 @@ class ElectricBikeItinerary(Itinerary):
     The route is generated with openrouteservice
     """
     def __init__(self, start, end, **kwargs):
+        self.name = 'e-bike'
         self.itinerary_name = "en vélo électrique"
         self.picture_name = "electric-bike.png"
         #On part de l'hypothèse que l'énergie nécessaire est équivalent à marcher pour 20km/h
@@ -221,6 +226,7 @@ class CarItinerary(Itinerary):
     The route is generated with openrouteservice
     """
     def __init__(self, start, end, **kwargs):
+        self.name = 'car'
         self.itinerary_name = "en voiture"
         self.picture_name = "car-compact.png"
         self.calories_per_hour = 0
@@ -246,6 +252,7 @@ class TransitItinerary(Itinerary):
     The route is generated with googlemaps
     """
     def __init__(self, start, end, **kwargs):
+        self.name = 'transit'
         self.itinerary_name = "en transports en commun"
         self.picture_name = "bus.png"
         self.calories_per_hour = 0
@@ -284,17 +291,24 @@ class IndirectItinerary(Itinerary):
     def carbon_emission(self):
         return sum([route.carbon_emission() for route in self.routes])
 
+    def _kwargs_without_forbidden_vehicles(self, kwargs):
+        new_kwargs=kwargs.copy()
+        new_kwargs.pop("forbidden_vehicles")
+        return new_kwargs
+
 class VelibItinerary(IndirectItinerary):
     """
     Velib itinerary : itinerary using velibs
     User will walk to the closest non empty station, take a velib and leave it in a non full station
     """
     def __init__(self, start, end, **kwargs):
+        self.name = 'velib'
         self.itinerary_name = "Vélib"
         self.picture_name = "bicycle.png"
         self.grade = 0
         self.labels = []
         (stationA, stationB) = self.__GiveStations(start, end)
+        kwargs=self._kwargs_without_forbidden_vehicles(kwargs)
         self.routes = [FootItinerary(start,stationA, **kwargs), BikeItinerary(stationA, stationB, **kwargs), FootItinerary(stationB,end, **kwargs)]
         super().__init__(start, end)
 
@@ -322,11 +336,13 @@ class eVelibItinerary(IndirectItinerary):
     User will walk to the closest non empty station, take a e-velib and leave it in a non full station
     """
     def __init__(self, start, end, **kwargs):
+        self.name = 'e-velib'
         self.itinerary_name = "e-velib"
         self.picture_name = "electric-bike.png"
         self.grade = 0
         self.labels = []
         (stationA, stationB) = self.__GiveStations(start, end)
+        kwargs=self._kwargs_without_forbidden_vehicles(kwargs)
         self.routes = [FootItinerary(start, stationA, **kwargs), ElectricBikeItinerary(stationA, stationB, **kwargs),
                        FootItinerary(stationB, end, **kwargs)]
 
@@ -356,11 +372,13 @@ class BirdItinerary(IndirectItinerary):
     User will walk to the closest free bird scooter, and leave at his destination
     """
     def __init__(self, start, end, **kwargs):
+        self.name = 'bird'
         self.itinerary_name = "en trotinette bird"
         self.picture_name = "scooter.png"
         self.grade = 0
         self.labels = []
         scooter = self.__FindScooter(start)
+        kwargs=self._kwargs_without_forbidden_vehicles(kwargs)
         self.routes = [FootItinerary(start,scooter, **kwargs), ElectricBikeItinerary(scooter, end, **kwargs)]
         ## We assume Bird speed is similar to Bike speed which might be optimistic
         super().__init__(start, end)
