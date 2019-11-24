@@ -4,16 +4,37 @@ A partir des coordonnées GPS d’une personne et de l’adresse à laquelle ell
 On se limitera à la ville de Paris et on se concentrera sur des critères tels que : la météo, les stations de métro/vélib/autolib à proximité du lieu de départ et d’arrivée, la charge à porter, etc…
 Une interface graphique n’est pas obligatoire pour ce projet.
 
-## Getting Started
+## 1. Présentation et fonctionnalités
+TO DO
 
-Dans le dossier du projet, executer le fichier 
-```__main__.py```
+## 2. POOA
+TO DO
 
-### Prerequisites
 
-Les librairies nécéssaires sont contenues dans le fichier ```requirements.txt```
+##3. Utilisation
 
-POur les installer, il suffit d'exécuter la commande suivante:
+###Installation
+Les librairies nécéssaires sont indiquées dans le fichier ```requirements.txt```
+
+Pour les installer, il suffit d'exécuter la commande suivante:
 ```
 pip install -r requirements.txt
 ```
+
+Solution alternative : utiliser l'environnement virtuel présent dans l'archive zip via la commande 
+```
+source (maps_2.0 folder)/venv/bin/activate
+```
+
+###Lancement du serveur
+
+Dans le dossier du projet, executer le fichier 
+```__main__.py```
+via la commande :
+```
+python __main__.py
+```
+**Remarque :** le paramètre ```--debugger``` ou ```-d``` à l'exécution permet de lancer le programme en mode débugger, avec des logs plus détaillés
+
+L'application est alors accessible depuis un navigateur internet classique.
+
