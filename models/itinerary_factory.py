@@ -40,6 +40,16 @@ class ItineraryFactory:
         return json
 
     def generate_route(self, type, start, end, out_queue, **kwargs):
+        """
+        Creates a route with the calculation made in a new thread in order to minimize response time
+
+        :param type:
+        :param start:
+        :param end:
+        :param out_queue: Queue to centralize information of the different threads
+        :param kwargs:
+        :return:
+        """
         builder = self._builders.get(type)
         if builder is None:
             raise ValueError(type)
@@ -53,6 +63,14 @@ class ItineraryFactory:
 
 
     def generate_all_routes(self, start, end, **kwargs):
+        """
+        Creates all routes with each routes in a different thread to minimize response time
+
+        :param start:
+        :param end:
+        :param kwargs:
+        :return:
+        """
         my_queue=Queue()
         threads=[]
         tmpsstart=[]

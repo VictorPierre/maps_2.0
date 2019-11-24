@@ -362,7 +362,7 @@ class BirdItinerary(IndirectItinerary):
         self.labels = []
         scooter = self.__FindScooter(start)
         self.routes = [FootItinerary(start,scooter, **kwargs), ElectricBikeItinerary(scooter, end, **kwargs)]
-        ## to do : change speed (scooter is slower than a bike)
+        ## We assume Bird speed is similar to Bike speed which might be optimistic
         super().__init__(start, end)
 
     def budget(self):
