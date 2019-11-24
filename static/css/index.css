@@ -16,14 +16,24 @@ body{
 .ap-name{color: black}
 
 .left_menu{
+    overflow-y: scroll;
+    max-height: 100vh;
+    padding: 0px 20px;
     width: 30%;
     min-width: 350px;
-    padding: 20px;
     background-color: darkgrey;
     color: white;
 }
+::-webkit-scrollbar {
+    display: none;
+}
 #form{
-    margin-top: 30px;
+    margin-top: 10px;
+}
+
+.submit{
+    width: 100%;
+    text-align: right;
 }
 
 #options, #options-content>.row{
@@ -38,13 +48,23 @@ body{
     margin-right: -20px;
 }
 
-#options .row{
-    margin-top: 15px;
-    margin-bottom: 15px;
+#options-content .header{
+    color: lightgray;
+    font-size: 14px;
 }
+#options-content label{
+    font-size: 12px;
+}
+#options-content .row{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+
 
 #options{
     height: 30px;
+    margin-top: 10px;
 }
 #options>div{
     display: none;

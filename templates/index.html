@@ -32,8 +32,10 @@
                 <div>
                     <input type="hidden" value="2.3419488" step="0.0000001" min="00" max="50" id="end_long" name="end_long">
                 </div>
+                <div class="submit">
+                    <input type="submit" value="Rechercher">
+                </div>
 
-                <input type="submit" value="Rechercher">
                 <div id="options">
                     <div>Options d'itinéraire</div>
                     <div class="toggleButton">Fermer</div>
@@ -41,6 +43,7 @@
                 </div>
                 <div id="options-content">
                     <div class="row">
+                        <div class="header">Critère de choix :</div>
                         <select name="choice" id="choice">
                             <option value="grade">Notre recommendation</option>
                             <option value="duration">Le plus rapide</option>
@@ -52,7 +55,7 @@
                     </div>
                     <div class="row">
                         <div class="checkboxes_preferences">
-                            Préférences
+                            <div class="header">Préférences :</div>
                             <div>
                               <input type="checkbox" id="accessible" name="accessible">
                               <label for="accessible">Accessible PMR</label>
@@ -67,7 +70,7 @@
                             </div>
                         </div>
                         <div class="checkboxes_vehicles">
-                            Mes véhicules
+                            <div class="header">Mes véhicules :</div>
                             <input type="hidden" value="[]" id="forbidden_vehicles" name="forbidden_vehicles">
                             <div>
                               <input type="checkbox" id="bike" name="vehicles[]" value="bike" checked>

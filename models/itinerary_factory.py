@@ -1,5 +1,6 @@
 import time
 import datetime
+import logging
 from threading import Thread
 from multiprocessing import Queue
 from statistics import *
@@ -19,7 +20,7 @@ class ItineraryFactory:
             "electric_bike": ElectricBikeItinerary,
             "velib": VelibItinerary,
             "e-velib": eVelibItinerary,
-            "transit": TransitItinerary,
+            #"transit": TransitItinerary,
             "car": CarItinerary,
             "bird": BirdItinerary,
         }
@@ -55,11 +56,11 @@ class ItineraryFactory:
             raise ValueError(type)
         try:
             out_queue.put(builder(start, end, **kwargs))
+            logging.info(type.upper()+" itinerary successfully generated")
         except (RainCompatibleException, LoadedCompatibleException, DisabilityCompatibleException, SameStation, ForbiddenVehicleException) as e:
-            print(e)
+            logging.info(type.upper()+" itinerary not generated\n"+str(e))
         except (ValueError, ApiException) as e:
-            print("Impossible de générer l'itinéraire :")
-            print(e)
+            logging.warning(type.upper()+" itinerary error\n"+ str(e))
 
 
     def generate_all_routes(self, start, end, **kwargs):
@@ -144,7 +145,11 @@ class ItineraryFactory:
         :param prices:
         :return:
         """
-        return -2*route.duration/max(durations) + route.calories()/max(calories) - route.carbon_emission()/max(CO2) - route.budget()/max(prices)
+        duration_grade = 0 if max(durations)==0 else -route.duration/max(durations)
+        carbon_grade = 0 if max(CO2) else -route.carbon_emission()/max(CO2)
+        cost_grade = 0 if max(prices)==0 else -route.budget()/max(prices)
+        calories_grade = 0 if max(calories)==0 else route.calories()/max(calories)
+        return 2*duration_grade + carbon_grade + cost_grade + calories_grade
 
     def __grade_all(self):
         """

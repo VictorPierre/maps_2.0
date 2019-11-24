@@ -1,5 +1,6 @@
 from flask import render_template
 import numpy as np
+import logging
 
 from .point import Point
 from .exceptions import *
@@ -85,13 +86,13 @@ class Itinerary:
         :return:
         """
         if kwargs.get("disability_compatible")==True and not self.disability_compatible:
-            raise DisabilityCompatibleException("Impossible de faire de ce moyen de transport en fauteuil roulant")
+            raise DisabilityCompatibleException("Not compatible with disabled people")
         if kwargs.get("rain_compatible") == True and not self.rain_compatible:
-            raise RainCompatibleException("Ce moyen de transport mouille sous la pluie")
+            raise RainCompatibleException("Not compatible with rain")
         if kwargs.get("loaded_compatible") == True and not self.loaded_compatible:
-            raise LoadedCompatibleException("Impossible de transporter des charges de cette façon")
+            raise LoadedCompatibleException("Not compatible with loaded people")
         if kwargs.get("forbidden_vehicles") and self.name in kwargs.get("forbidden_vehicles"):
-            raise ForbiddenVehicleException("Véhicule non autorisé pour cet utilisateur")
+            raise ForbiddenVehicleException("Vehicle not available for the current user")
 
     def __html(self):
         """
@@ -136,9 +137,9 @@ class Itinerary:
             if minute == 0:
                 return str(time) + "s"
             else:
-                return str(minute)+"mn"
+                return str(minute)+"min"
         else:
-            return str(heure)+"h"+str(minute)+"mn"
+            return str(heure)+"h"+str(minute)+"min"
 
 
 class FootItinerary(Itinerary):
