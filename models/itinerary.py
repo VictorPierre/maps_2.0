@@ -36,14 +36,14 @@ class Itinerary:
         :param disability_compatible: boolean, default : false
         :param loaded_compatible: boolean, default : false
         """
-        self.cost_per_km=10 #Très conservatif en cas de manque d'information
-        self.fixed_cost=5 #Très conservatif en cas de manque d'information
-        self.C02_per_km=0 #Si on n'a pas d'information on va partir du principe que la production de C02 est faible (transport en commun, etc...)
-        self.calories_per_hour=0 #Si on a pas d'information on va partir du principe que cela n'est pas une activité sportive
+        self.cost_per_km=10 # Très conservatif en cas de manque d'information
+        self.fixed_cost=5 # Très conservatif en cas de manque d'information
+        self.C02_per_km=0 # Si on n'a pas d'information on va partir du principe que la production de C02 est faible (transport en commun, etc...)
+        self.calories_per_hour=0 # Si on a pas d'information on va partir du principe que cela n'est pas une activité sportive
         self.grade=0
         self.labels=[]
-        self.rain_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter en cas de pluie
-        self.disability_compatible=False #Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
+        self.rain_compatible=False # Si on a pas cette information on part du principe qu'il faut éviter en cas de pluie
+        self.disability_compatible=False # Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
         self.loaded_compatible=False
 
     def budget(self):
@@ -106,7 +106,7 @@ class Itinerary:
                         budget = str(round(self.budget(),2)) + " €",
                         carbon_emission= str(round(self.carbon_emission())) + " g",
                         calories = str(round(self.calories())) + " Kcal",
-                        grade = str(self.grade),
+                        grade = str(round(self.grade,3)),
                         labels = self.labels
                         )
 
@@ -152,7 +152,7 @@ class FootItinerary(Itinerary):
         self.C02_per_km = 0.2*245/5
         self.grade=0
         self.labels = []
-        self.rain_compatible = True
+        self.rain_compatible = False
         self.disability_compatible = True
         self.loaded_compatible = True
 

@@ -44,6 +44,11 @@ body{
 #options>div{
     display: none;
 }
+
+.toggleButton {
+    cursor: pointer;
+}
+
 #options-content {
     display: none;
 }
