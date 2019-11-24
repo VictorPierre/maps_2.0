@@ -2,6 +2,12 @@
     <div class="main">
         <img class="icon" src="{{ url_for('static', filename='images/'+picture_name) }}" alt="{{picture_name}}">
         <div class="name">{{name}}</div>
+        {% for label in labels%}
+            <div class="label">
+                <img class="label_icon" src="{{ url_for('static', filename='images/'+label['picture']) }}" alt="{{label}}">
+                <div class="label_name">{{label["name"]}}</div>
+            </div>
+        {% endfor %}
         <div class="numbers">
             <div class="duration">{{duration}}</div>
             <div class="distance">{{distance}}</div>
@@ -17,9 +23,6 @@
         <div>CO2: {{carbon_emission}}</div>
         <div>Calories : {{calories}}</div>
         <div>Note: {{grade}}</div>
-        {% for label in labels%}
-            <div>{{label}}</div>
-        {% endfor %}
     </div>
 </div>
 

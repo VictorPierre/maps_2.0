@@ -143,13 +143,13 @@ class ItineraryFactory:
 
     def __set_labels(self):
         """
-        Create the labels 'fast', 'green' and 'athletic' for the best itineraries
+        Create the labels 'fast', 'green', 'selection' and 'athletic' for the best itineraries
         :return:
         """
         if len(self.routes)==0:
             return
         else:
-            fastest_route, greenest_route, most_athletic_route = self.routes[0],self.routes[0],self.routes[0]
+            fastest_route, greenest_route, most_athletic_route, best_route = self.routes[0],self.routes[0],self.routes[0],self.routes[0]
             for route in self.routes:
                 if route.duration<fastest_route.duration:
                     fastest_route=route
@@ -157,6 +157,9 @@ class ItineraryFactory:
                     greenest_route=route
                 if route.calories()>most_athletic_route.calories():
                     most_athletic_route=route
-            fastest_route.labels.append("fast")
-            most_athletic_route.labels.append("athletic")
-            greenest_route.labels.append("green")
+                if route.calories()>best_route.grade:
+                    best_route=route
+            fastest_route.labels.append({"name":"Le plus rapide", "picture": "fastest.png"})
+            most_athletic_route.labels.append({"name":"Le choix fitness", "picture": "healthy.png"})
+            greenest_route.labels.append({"name":"Le choix éco", "picture": "eco-friendly.png"})
+            greenest_route.labels.append({"name":"Meilleur itinéraire", "picture": "selection.png"})

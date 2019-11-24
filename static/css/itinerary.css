@@ -54,3 +54,21 @@
     display: block;
     flex-grow: 1;
 }
+
+.label{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60px;
+}
+
+.label_icon{
+    height: 30px;
+    width: 30px;
+}
+
+.label_name{
+    font-size: 8px;
+    max-width: 50px;
+    text-align: center;
+}
