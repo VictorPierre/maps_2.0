@@ -21,6 +21,18 @@
             <input type="search" id="arrivee" placeholder="Choisissez une destination" />
             <form id="form" action="/" method="post">
                 <div>
+                    <input type="checkbox" id="velo" name="velo">
+                    <label for="velo">J'ai un vélo</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="e-velo" name="e-velo">
+                    <label for="e-velo">J'ai un vélo électrique</label><br>
+                </div>
+                <div>
+                    <input type="checkbox" id="voiture" name="voiture">
+                    <label for="voiture">J'ai une voiture</label><br>
+                <br></div>
+                <div>
                     <input type="hidden" value="48.8327878" step="0.0000001" min="0" max="50" id="start_lat" name="start_lat">
                 </div>
                 <div>
@@ -32,6 +44,7 @@
                 <div>
                     <input type="hidden" value="2.3419488" step="0.0000001" min="00" max="50" id="end_long" name="end_long">
                 </div>
+
                 <input type="submit" value="Rechercher">
                 <div id="options">
                     <div>Options d'itinéraire</div>

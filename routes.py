@@ -31,15 +31,15 @@ def calculate_itinerary():
     }
 
     routes = ItineraryFactory()
-    #Commentaries are here in case the time necessary for a response needs to be measured
-    #tmps1 = datetime.datetime.now()
+    # Commentaries are here in case the time necessary for a response needs to be measured
+    # tmps1 = datetime.datetime.now()
 
     routes.generate_all_routes(start, end, **kwargs)#multi_thread # Temps d'execution 0:00:01.599014
 
-    routes.sort(choix)
+    routes.sort(choix) #on trie les routes selon le choix selectionné par l'utilisateur sur l'interface web
 
     routes_json = routes.json()
 
-    #tmps2 = datetime.datetime.now()
-    #print("Le temps total pour les appels et retours aux API est de {}".format(tmps2-tmps1))
+    # tmps2 = datetime.datetime.now()
+    # print("Le temps total pour les appels et retours aux API est de {}".format(tmps2-tmps1))
     return json.jsonify(routes_json)
