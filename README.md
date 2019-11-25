@@ -23,9 +23,9 @@ Pour les installer, il suffit de se placer dans le dossier maps_2.0, et d'éxéc
 ```
 pip install -r requirements.txt
 ```
-**Solution alternative :** utiliser l'environnement virtuel présent dans l'archive zip via la commande 
+*Solution alternative :* utiliser l'environnement virtuel présent dans l'archive zip via la commande 
 ```
-source (maps_2.0 folder)/venv/bin/activate
+source venv/bin/activate
 ```
 
 #### Windows
@@ -38,6 +38,7 @@ Dans le dossier du projet, executer le fichier
 ```__main__.py```
 via la commande :
 ```python __main__.py```
+
 **Remarque :** le paramètre ```--debugger``` ou ```-d``` à l'exécution permet de lancer le programme en mode débugger, avec des logs plus détaillés
 
 Le serveur Flask démarre alors, et les logs sont visibles en console.
