@@ -2,22 +2,22 @@ $( document ).ready(function() {
     var algolia_params = {
         appId: 'plMDWCZD52QJ',
         apiKey: 'b5cba8fb73a56e36a9a123facce6af93',
-        aroundLatLng : "48.857832, 2.346579",
-        aroundRadius : 40000,
-    }
+        aroundLatLng : "48.856496, 2.342510",
+        aroundRadius : 7000,
+    };
     var placesAutocompleteDepart = places({
         appId: 'plMDWCZD52QJ',
         apiKey: 'b5cba8fb73a56e36a9a123facce6af93',
-        aroundLatLng : "48.857832, 2.346579",
-        aroundRadius : 40000,
+        aroundLatLng : "48.856496, 2.342510",
+        aroundRadius : 7000,
         container: document.querySelector('#depart')
     });
 
     var placesAutocompleteArrivee = places({
         appId: 'plMDWCZD52QJ',
         apiKey: 'b5cba8fb73a56e36a9a123facce6af93',
-        aroundLatLng : "48.857832, 2.346579",
-        aroundRadius : 40000,
+        aroundLatLng : "48.856496, 2.342510",
+        aroundRadius : 7000,
         container: document.querySelector('#arrivee')
     });
     placesAutocompleteDepart.on('change', function resultSelected(e) {

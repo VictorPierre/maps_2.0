@@ -8,7 +8,8 @@ Une interface graphique n’est pas obligatoire pour ce projet.
 TO DO
 
 ## 2. POOA
-TO DO
+![GitHub Logo](/static/images/uml.png)
+Format: ![Alt Text](png)
 
 
 ## 3. Utilisation
