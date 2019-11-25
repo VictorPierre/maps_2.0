@@ -11,9 +11,9 @@ TO DO
 TO DO
 
 
-##3. Utilisation
+## 3. Utilisation
 
-###Installation
+### Installation
 Les librairies nécéssaires sont indiquées dans le fichier ```requirements.txt```
 
 Pour les installer, il suffit d'exécuter la commande suivante:
@@ -26,7 +26,7 @@ Solution alternative : utiliser l'environnement virtuel présent dans l'archive 
 source (maps_2.0 folder)/venv/bin/activate
 ```
 
-###Lancement du serveur
+### Lancement du serveur
 
 Dans le dossier du projet, executer le fichier 
 ```__main__.py```

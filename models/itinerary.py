@@ -6,6 +6,7 @@ from .point import Point
 from .exceptions import *
 from lib_APIs import *
 
+
 class Itinerary:
     """
     ABSTRACT CLASS, implementing the following attributes/methods
@@ -110,7 +111,8 @@ class Itinerary:
                         carbon_emission= str(round(self.carbon_emission())) + " g",
                         calories = str(round(self.calories())) + " Kcal",
                         grade = str(round(self.grade,3)),
-                        labels = self.labels
+                        labels = self.labels,
+                        rain_risk = accuweather.HasPrecipitation()
                         )
 
     def __meter_to_km(self):

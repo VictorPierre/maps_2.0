@@ -4,7 +4,6 @@ from flask import Flask, render_template, request, json
 
 from models.itinerary_factory import *
 from models.point import *
-from lib_APIs import accuweather
 
 
 
@@ -13,7 +12,7 @@ app = Flask(__name__)
 ##Index page
 @app.route('/')
 def index():
-    return render_template('index.html', HasPrecipitation=accuweather.HasPrecipitation())
+    return render_template('index.html')
 
 ##calculate itinerary from form
 @app.route('/', methods = ['POST'])
