@@ -1,43 +1,24 @@
 $( document ).ready(function() {
-    var algolia_params = {
-        appId: 'plMDWCZD52QJ',
-        apiKey: 'b5cba8fb73a56e36a9a123facce6af93',
-        aroundLatLng : "48.856496, 2.342510",
-        aroundRadius : 7000,
-    };
-    var placesAutocompleteDepart = places({
-        appId: 'plMDWCZD52QJ',
-        apiKey: 'b5cba8fb73a56e36a9a123facce6af93',
-        aroundLatLng : "48.856496, 2.342510",
-        aroundRadius : 7000,
-        container: document.querySelector('#depart')
-    });
+    //init Algolia search bars
+    initAlgolia('plMDWCZD52QJ', 'b5cba8fb73a56e36a9a123facce6af93');
 
-    var placesAutocompleteArrivee = places({
-        appId: 'plMDWCZD52QJ',
-        apiKey: 'b5cba8fb73a56e36a9a123facce6af93',
-        aroundLatLng : "48.856496, 2.342510",
-        aroundRadius : 7000,
-        container: document.querySelector('#arrivee')
-    });
+    //listen to updates
     placesAutocompleteDepart.on('change', function resultSelected(e) {
        document.querySelector('#start_lat').value = e.suggestion.latlng['lat'] || '';
        document.querySelector('#start_long').value = e.suggestion.latlng['lng'] || '';
     });
-
     placesAutocompleteArrivee.on('change', function resultSelected(e) {
        document.querySelector('#end_lat').value = e.suggestion.latlng['lat'] || '';
        document.querySelector('#end_long').value = e.suggestion.latlng['lng'] || '';
     });
 
+    //init toggle button (Options)
     $(".toggleButton").on('click', function() {
         $("#options-content").toggle();
         $("#options>div").toggle();
     });
 
-
-
-    //Form submission
+    //Overwrite form submission function
     $("#form").submit(function(e) {
         e.preventDefault(); // avoid to execute the actual submit of the form.
         var form = $(this);
@@ -63,15 +44,42 @@ $( document ).ready(function() {
     });
 });
 
+//Variables initialisation
+var placesAutocompleteDepart;
+var placesAutocompleteArrivee;
 var routes;
-
-//Map initialisation
 var map = L.map('mapid').setView([48.84, 2.34], 13);
 tile = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
 	maxZoom: 18,
 }).addTo(map);
 
+
+
+var initAlgolia = function (appId,apiKey) {
+    //Algolia search bar initialization
+    var algolia_params = {
+        appId: appId,
+        apiKey: apiKey,
+        aroundLatLng : "48.856496, 2.342510",
+        aroundRadius : 7000,
+    };
+
+    placesAutocompleteDepart = places(
+        Object.assign(
+            {},
+            algolia_params,
+            {container: document.querySelector('#depart')}
+        )
+    );
+    placesAutocompleteArrivee = places(
+        Object.assign(
+            {},
+            algolia_params,
+            {container: document.querySelector('#arrivee')}
+        )
+    );
+}
 
 var displayRoutes = function (routes) {
     $("#routes").empty()
