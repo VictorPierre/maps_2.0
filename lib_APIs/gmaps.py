@@ -17,7 +17,7 @@ def transit_itinerary(start, end):
     # Request directions via public transit (GoogleMaps)
     directions_result = gmaps.directions(start.to_LatLong(), end.to_LatLong(), mode="transit")
 
-    ##Select the first itinerary (TO DO : improve selection)
+    ##Select the first itinerary
     direction = directions_result[0]['legs'][0]
 
     duration = direction['duration']['value']

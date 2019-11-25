@@ -1,5 +1,4 @@
 import time
-import datetime
 import logging
 from threading import Thread
 from multiprocessing import Queue
@@ -74,10 +73,6 @@ class ItineraryFactory:
         """
         my_queue=Queue()
         threads=[]
-        tmpsstart=[]
-        tmpsend=[]
-        tmpsdiff=[]
-        tmpssum=datetime.timedelta()
 
         #Creation des threads pour chaque type d'itinéraire
         for builder in self._builders:
@@ -94,21 +89,13 @@ class ItineraryFactory:
             thread.join()
             tmpsend.append(datetime.datetime.now())
 
-        #Vérification de la pertinence temporelle du multi-thread
-        #for i in range (len(tmpsstart)):
-         #   tmpsdiff.append(tmpsend[i]-tmpsstart[i])
-         #   tmpssum+=tmpsdiff[-1]
-        #print("La sommation des temps totaux pour l'appel et le retour aux APIs pour est de {}".format(tmpssum))
-
-        #tmps1 = datetime.datetime.now()
-
         #Reprend les infos dans la queue venant des threads
         while int(my_queue.qsize())>0 :
             self.routes.append(my_queue.get())
-        #tmps2 = datetime.datetime.now()
-        #print("Le temps total pour le dépilage de la queue est de {}".format(tmps2 - tmps1))
 
+        #computes grades for each itinerary
         self.__grade_all()
+        #give labels (ex: fastest, best...)
         self.__set_labels()
 
     def sort(self, choix):

@@ -316,13 +316,6 @@ class VelibItinerary(IndirectItinerary):
     def budget(self):
         return velib.velib_cost(self.routes[1].duration)
 
-    def __str__(self):
-        Aff = "Première étape:" + str(self.routes[0])
-        Aff += "\nDeuxième étape :" + str(self.routes[1])
-        Aff += "\nTroisième étape:" + str(self.routes[2])
-        Aff += ". Le trajet total dure" + str(self.duration)
-        return Aff
-
     def __GiveStations(self, start, end):
         latA, longA = velib.closest_velib_station(start.lat, start.long)
         latB, longB = velib.closest_velib_station(end.lat, end.long)
@@ -352,13 +345,6 @@ class eVelibItinerary(IndirectItinerary):
     def budget(self):
         return velib.evelib_cost(self.routes[1].duration)
 
-    def __str__(self):
-        Aff = "Première étape:" + str(self.routes[0])
-        Aff += "\nDeuxième étape :" + str(self.routes[1])
-        Aff += "\nTroisième étape:" + str(self.routes[2])
-        Aff += ". Le trajet total dure" + str(self.duration)
-        return Aff
-
     def __GiveStations(self, start, end):
         latA, longA = velib.closest_evelib_station(start.lat, start.long)
         latB, longB = velib.closest_evelib_station(end.lat, end.long)
@@ -386,12 +372,6 @@ class BirdItinerary(IndirectItinerary):
 
     def budget(self):
         return bird.cost(self.routes[1].duration)
-
-    def __str__(self):
-        Aff = "Première étape:" + str(self.routes[0])
-        Aff += "\nDeuxième étape :" + str(self.routes[1])
-        Aff += ". Le trajet total dure" + str(self.duration) + "s"
-        return Aff
 
     def __FindScooter(self, start):
         scooter_lat, scooter_long = bird.find_scooter(start.lat, start.long)
