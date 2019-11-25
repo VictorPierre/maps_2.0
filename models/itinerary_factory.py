@@ -7,6 +7,7 @@ from statistics import *
 from .itinerary import *
 from .exceptions import *
 from lib_APIs.exceptions import *
+from lib_APIs import accuweather
 
 class ItineraryFactory:
     """
@@ -34,9 +35,17 @@ class ItineraryFactory:
         self.routes = []
 
     def json(self):
+        ##Calculates optionnal arguments (weather)
+        kwargs={}
+        try:
+            kwargs["rain_risk"]=accuweather.HasPrecipitation()
+        except ApiException as e:
+            logging.warning("API exception :" + str(e))
+
+        ##generate a json for each itinerary
         json = []
         for route in self.routes:
-            json.append(route.json())
+            json.append(route.json(**kwargs))
         return json
 
     def generate_route(self, type, start, end, out_queue, **kwargs):
@@ -81,13 +90,11 @@ class ItineraryFactory:
 
         #Démarrage de chaque thread
         for thread in threads:
-            tmpsstart.append(datetime.datetime.now())
             thread.start()
 
         #Pour chaque thread on précise la nécessité d'attendre les autres avant d'avancer
         for thread in threads:
             thread.join()
-            tmpsend.append(datetime.datetime.now())
 
         #Reprend les infos dans la queue venant des threads
         while int(my_queue.qsize())>0 :

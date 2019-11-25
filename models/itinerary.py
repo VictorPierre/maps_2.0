@@ -70,13 +70,13 @@ class Itinerary:
         """
         return float(self.calories_per_hour)*float(self.duration)/3600
 
-    def json(self):
+    def json(self, **kwargs):
         """
         Give a JSON containing the geojson + an HTML preview of the itinerary
         :return:json
         """
         return {
-            "html": self.__html(),
+            "html": self.__html(**kwargs),
             "geojson": self.geojson,
         }
 
@@ -95,7 +95,7 @@ class Itinerary:
         if kwargs.get("forbidden_vehicles") and self.name in kwargs.get("forbidden_vehicles"):
             raise ForbiddenVehicleException("Vehicle not available for the current user")
 
-    def __html(self):
+    def __html(self, **kwargs):
         """
         Generate an html for rendering the itinerary
         :return:
@@ -106,13 +106,13 @@ class Itinerary:
                         duration = self.__sec_to_time(),
                         distance = self.__meter_to_km(),
                         rain_compatible = self.rain_compatible,
+                        rain_risk= None if kwargs.get("rain_risk")==None else kwargs.get("rain_risk"),
                         disability_compatible = self.disability_compatible,
                         budget = str(round(self.budget(),2)) + " €",
                         carbon_emission= str(round(self.carbon_emission())) + " g",
                         calories = str(round(self.calories())) + " Kcal",
                         grade = str(round(self.grade,3)),
                         labels = self.labels,
-                        rain_risk = accuweather.HasPrecipitation()
                         )
 
     def __meter_to_km(self):

@@ -15,7 +15,7 @@
     </div>
 
     <div class="more_info">
-        {% if not rain_compatible%}
+        {% if not rain_compatible and rain_risk!=None%}
             {% if not rain_risk%}
                 <div class="rain-ok">Pas de pluie annoncée
                     <img class="sun" src="static/images/sun.png" alt="Soleil">
