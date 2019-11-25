@@ -35,9 +35,7 @@ $( document ).ready(function() {
         $("#options>div").toggle();
     });
 
-    $("#form input:not([type=hidden]), #form select").on('change', function() {
-        $("#form").submit()
-    });
+
 
     //Form submission
     $("#form").submit(function(e) {
@@ -83,11 +81,6 @@ var displayRoutes = function (routes) {
         $("#routes").append(routes[i]["html"])
         //create route id
         $("#routes .itinerary:last-child").attr('routeId', i)
-    }
-    //show the appropriate rain message
-    if (rain){
-        $(".rain-ok").hide()
-        $(".rain-alert").show()
     }
 
     highlightRoute(0);

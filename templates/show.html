@@ -16,8 +16,15 @@
 
     <div class="more_info">
         {% if not rain_compatible%}
-            <div class="rain-ok">Pas de pluie annoncée</div>
-            <div class="rain-alert">Attention, il risque de pleuvoir</div>
+            {% if not rain_risk%}
+                <div class="rain-ok">Pas de pluie annoncée
+                    <img class="sun" src="static/images/sun.png" alt="Soleil">
+                </div>
+            {%else%}
+                <div class="rain-alert">Attention, il risque de pleuvoir
+                    <img class="rain" src="static/images/rain.png" alt="rain">
+                </div>
+            {% endif %}
         {% endif %}
         <div>Prix : {{budget}}</div>
         <div>CO2: {{carbon_emission}}</div>

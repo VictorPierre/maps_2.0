@@ -38,10 +38,27 @@
 }
 .rain-ok{
     color: #3A7734;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.rain-ok .sun{
+    height: 40px;
+    margin-right: 0;
 }
 .rain-alert{
     color: #9C1A1C;
-    display: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.rain-alert .rain{
+    height: 40px;
+    margin-right: 0;
 }
 
 .itinerary[highlighted]{
