@@ -28,17 +28,16 @@ def calculate_itinerary():
         "loaded_compatible": request.form.get('loaded') != None,
         "forbidden_vehicles": request.form.get("forbidden_vehicles").split(',')
     }
-
+#
+    #Initialisation d'une factory
     routes = ItineraryFactory()
-    # Commentaries are here in case the time necessary for a response needs to be measured
-    # tmps1 = datetime.datetime.now()
 
-    routes.generate_all_routes(start, end, **kwargs)#multi_thread # Temps d'execution 0:00:01.599014
+    #Generation des itineraires
+    routes.generate_all_routes(start, end, **kwargs)
 
-    routes.sort(choix) #on trie les routes selon le choix selectionné par l'utilisateur sur l'interface web
+    #Trie des itinéraires selon l'ordre choisi par l'utilisateur
+    routes.sort(choix)
 
+    #envoi des données en format json au client web
     routes_json = routes.json()
-
-    # tmps2 = datetime.datetime.now()
-    # print("Le temps total pour les appels et retours aux API est de {}".format(tmps2-tmps1))
     return json.jsonify(routes_json)

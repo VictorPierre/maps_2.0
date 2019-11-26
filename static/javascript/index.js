@@ -106,6 +106,8 @@ var displayRoutes = function (routes) {
 var highlightRoute = function(route_id){
     //Show the geojson of the route
     showGeoJSON(routes[route_id]["geojson"])
+    //Show markers
+    showMarkers(routes[route_id].markers)
     //Add the highlighted attribute to the div
     $("#routes .itinerary").removeAttr('highlighted')
     $("#routes .itinerary:nth-child("+(route_id+1)+")").attr('highlighted', '')
@@ -126,6 +128,18 @@ var showGeoJSON = function(geojson){
         }
     }).addTo(map);
     map.fitBounds(markersLayer.getBounds());
+}
+
+var showMarkers = function(markers){
+    for (var i = 0; i < markers.length; i++) {
+        if(markers[i].description==""){
+            L.marker(markers[i].coordinates).addTo(map);
+        }
+        else{
+            L.marker(markers[i].coordinates).addTo(map)
+                .bindPopup(markers[i].description);
+        }
+    }
 }
 
 var resetMap = function () {
