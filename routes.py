@@ -35,7 +35,7 @@ def calculate_itinerary():
     #Generation des itineraires
     routes.generate_all_routes(start, end, **kwargs)
 
-    #Trie des itinéraires selon l'ordre choisi par l'utilisateur
+    #Tri des itinéraires selon l'ordre choisi par l'utilisateur
     routes.sort(choix)
 
     #envoi des données en format json au client web

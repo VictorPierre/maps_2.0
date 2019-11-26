@@ -4,6 +4,14 @@ A partir des coordonnées GPS d’une personne et de l’adresse à laquelle ell
 On se limitera à la ville de Paris et on se concentrera sur des critères tels que : la météo, les stations de métro/vélib/autolib à proximité du lieu de départ et d’arrivée, la charge à porter, etc…
 Une interface graphique n’est pas obligatoire pour ce projet.
 
+##Sommaire:
+1. Présentation et fonctionnalités
+    
+1. Architecture et Programmation Orientée Objet
+
+1. Installation et Utilisation
+
+
 ## 1. Présentation et fonctionnalités
 Nous avons choisi de passer par une interface Web pour présenter les résultats de notre projet. Celle-ci permet de présenter des résultats pour des trajets entre deux points trouvés grâce aux deux barres de recherche.
 
@@ -70,7 +78,7 @@ La source de l'erreur est alors accessible via la console.
 
 
 
-## 2. POOA
+## 2. Architecture et Programmation Orientée Objet
 
 L'architecture de notre projet se construit autour de la notion d'itinéraire. 
 Schématiquement, un itinéraire est défini par un départ, une arrivée et un moyen de transport ainsi que des attributs calculés à partir de ces informations (distances, durée, CO2).
@@ -84,17 +92,17 @@ L'héritage peut être réprésenté par le diagramme suivant:
 
 ***Factory:***
 
-Une factory est utilisée de manière à créer nos différents itinéraires plus simplement. Celle-ci peut être retrouvée dans le fichier itinerary_factory.py
+Une factory est utilisée de manière à créer nos différents itinéraires plus simplement. Celle-ci peut être retrouvée dans le fichier itinerary_factory.py. La factory est instanciée à la réception d'une requête POST sur le serveur sous le nom "routes".
 
 ***Multi-thread:***
 
 De manière à réduire au maximum le temps de réponse pour l'utilisateur, chaque itinéraire se créée sur un thread différent. Les threads sont instanciés par la factory, chaque réponse préliminaire d'un thread est ajouté dans une queue. Lorsque le dernier calcul d'itinéraire s'achève, les résultats stockés dans la queue sont transférés vers l'objet routes.
 
+***Serveur:***
 
+Le fichier routes.py définit les différentes requêtes supportées par le serveur, notamment la génération des itinéraires et leur envoi.
 
-
-
-## 3. Utilisation
+## 3. Installation et Utilisation
 
 ### Installation
 
