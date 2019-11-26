@@ -248,6 +248,43 @@ class CarItinerary(Itinerary):
         #Sachant qu'une voiture moyenne consomme 6.33L/100km et que 1L côute environ 1.5€
         return self.distance*1.5*6.33/100/1000
 
+class UberItinerary(Itinerary):
+    """
+    Uber itinerary : itinerary using user's own car.
+    The route is generated with openrouteservice
+    """
+    def __init__(self, start, end, **kwargs):
+        self.name = 'uber'
+        self.itinerary_name = "en Uber"
+        self.picture_name = "uber.png"
+        self.calories_per_hour = 0
+        # Sachant qu'en moyenne une voiture produit 166g/km d'après transilien.fr
+        self.C02_per_km = 166
+        self.grade = 0
+        self.labels = []
+        self.rain_compatible = True
+        self.disability_compatible = True
+        self.loaded_compatible = True
+
+        self._check_compatibility(**kwargs)
+        (self.duration,self.distance, self.geojson)= openrouteservice.itinerary(start, end, "driving-car")
+        self.geojson["properties"]["color"]="#000000"
+
+        ##the budget is precomputed :
+        self.uber_budget = self.__uber_budget()
+        ## 3 min of waiting time are added to the duration :
+        self.duration+=180
+
+    def budget(self):
+        return self.uber_budget
+
+    def __uber_budget(self):
+        '''
+        Estimated cost, doesn't take into account traffic and rush hours
+        (source : https://www.journaldunet.fr/patrimoine/guide-des-finances-personnelles/1209180-prix-uber-2019/)
+        :return:
+        '''
+        return 1.2+1.05/1000*self.distance+0.3/60*self.duration
 
 class TransitItinerary(Itinerary):
     """
