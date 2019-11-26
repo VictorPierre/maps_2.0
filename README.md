@@ -12,7 +12,15 @@ Nous avons choisi de passer par une interface Web pour présenter les résultats
 
 ![Interface Maps 2.0](static/images/maps.png)
 
-Les résultats obtenus peuvent être filtrés en fonction des préférences de l'utilisateur (préfère un trajet couvert ...) et aussi triés selon la durée, le prix ou d'autres critères. Le tri s'effectue par défault avec notre recommandation qui trie les itinéraires selon un note calculé en pondérant différents critères.
+Les résultats obtenus peuvent être filtrés en fonction des préférences de l'utilisateur:
+ * Ses préférences: Trajet couvert, (préfère un trajet couvert ...) et aussi triés selon la durée, le prix ou d'autres critères. 
+ * Si celui-ci possède bien le véhicule associé.
+ * Si celui-ci préfère une classement selon un critère spécifique autre que notre note globale.
+ 
+Le tri s'effectue donc par défault avec notre note globale. Les itinéraires sont affichés en ordre décroissant selon cette note calculée en pondérant les différents critères qui nous paraissaient les plus pertinents.
+
+L'utilisateur a également accès à des informations supplémentaires telles que le meilleur itinéraire pour un critère donné grâce à de petites vignettes associées et au risque de pluie.
+
 
 ### 1.2 Services utilisés et modèles sous-jacents
 
@@ -56,8 +64,8 @@ Le choix de ses différentes APIs s'est d'abord fait sur leur libre accès. Dans
 
 **Notes spécifique sur les APIs**
 
-Toutes les APIs utilisées sont publiques. Certaines ont un nombre très limités d'appels par jour. Il est donc fort possible qu'une API soit momentanément indisponible, auquel cas certains trajets pourraient ne pas s'afficher sur l'interface Web. 
-La source de l'erreur alors accessible via la console.
+Toutes les APIs utilisées sont publiques. Certaines ont un nombre très limité d'appels par jour. Il est donc fort possible qu'une API soit momentanément indisponible, auquel cas certains trajets pourraient ne pas s'afficher sur l'interface Web. 
+La source de l'erreur est alors accessible via la console.
 
 
 
@@ -65,7 +73,7 @@ La source de l'erreur alors accessible via la console.
 ## 2. POOA
 
 L'architecture de notre projet se construit autour de la notion d'itinéraire. 
-Schématiquement, un itinéraire est défini par un départ, une arrivée et un moyen de transport et des attributs calculés à partir de ces informations (distances, durée, CO2).
+Schématiquement, un itinéraire est défini par un départ, une arrivée et un moyen de transport ainsi que des attributs calculés à partir de ces informations (distances, durée, CO2).
 Un itinéraire complexe (transport en commun, Velib, etc...) peut alors se décomposer en une suite d'itinéraires simples.
 
 ***Héritage***
