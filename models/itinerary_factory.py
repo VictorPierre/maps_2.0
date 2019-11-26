@@ -158,8 +158,25 @@ class ItineraryFactory:
         CO2=[route.carbon_emission() for route in self.routes]
         prices=[route.budget() for route in self.routes]
 
+        min_grade, max_grade=0,0
         for route in self.routes:
             route.grade=self.__grade(route, durations, calories, CO2, prices)
+            ##keeps min and max grade for normalization
+            if route.grade<min_grade:
+                min_grade=route.grade
+            if route.grade>max_grade:
+                max_grade=route.grade
+
+        ##normalize all grades (between 0 and 5), and set all grades to 5 if they are the same
+        if max_grade==min_grade:
+            for route in self.routes:
+                route.grade = 5
+        else:
+            for route in self.routes:
+                route.grade = round(5*(route.grade-min_grade)/(max_grade-min_grade))
+
+
+
 
     def __set_labels(self):
         """

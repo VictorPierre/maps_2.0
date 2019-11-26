@@ -150,7 +150,7 @@ class FootItinerary(Itinerary):
     """
     def __init__(self, start, end, **kwargs):
         self.name='foot'
-        self.itinerary_name = "à pied"
+        self.itinerary_name = "Marche"
         self.picture_name = "walker.jpeg"
         # D'après fourchette-et-bikini.fr avec un poids moyen de 70kg
         self.calories_per_hour = 245
@@ -176,7 +176,7 @@ class BikeItinerary(Itinerary):
     """
     def __init__(self, start, end, **kwargs):
         self.name = 'bike'
-        self.itinerary_name = "en vélo"
+        self.itinerary_name = "Vélo"
         self.picture_name = "bicycle.png"
         # D'après fourchette-et-bikini.fr avec un poids moyen de 70kg et une vitesse moyenne de 20km/h
         self.calories_per_hour = 560
@@ -203,7 +203,7 @@ class ElectricBikeItinerary(Itinerary):
     """
     def __init__(self, start, end, **kwargs):
         self.name = 'e-bike'
-        self.itinerary_name = "en vélo électrique"
+        self.itinerary_name = "Vélo électrique"
         self.picture_name = "electric-bike.png"
         #On part de l'hypothèse que l'énergie nécessaire est équivalent à marcher pour 20km/h
         self.calories_per_hour = 245
@@ -230,7 +230,7 @@ class CarItinerary(Itinerary):
     """
     def __init__(self, start, end, **kwargs):
         self.name = 'car'
-        self.itinerary_name = "en voiture"
+        self.itinerary_name = "Voiture"
         self.picture_name = "car-compact.png"
         self.calories_per_hour = 0
         # Sachant qu'en moyenne une voiture produit 166g/km d'après transilien.fr
@@ -255,7 +255,7 @@ class UberItinerary(Itinerary):
     """
     def __init__(self, start, end, **kwargs):
         self.name = 'uber'
-        self.itinerary_name = "en Uber"
+        self.itinerary_name = "Uber"
         self.picture_name = "uber.png"
         self.calories_per_hour = 0
         # Sachant qu'en moyenne une voiture produit 166g/km d'après transilien.fr
@@ -293,7 +293,7 @@ class TransitItinerary(Itinerary):
     """
     def __init__(self, start, end, **kwargs):
         self.name = 'transit'
-        self.itinerary_name = "en transports en commun"
+        self.itinerary_name = "Transports en commun"
         self.picture_name = "bus.png"
         self.calories_per_hour = 0
         # D'après une moyenne pondérée par le nombre d'utilisateurs du Metro, RER, Tramway et Bus à Paris venant de transilien.fr pour la production de C02 par mode et de wikipedia pour la distribution
@@ -370,7 +370,7 @@ class eVelibItinerary(IndirectItinerary):
     """
     def __init__(self, start, end, **kwargs):
         self.name = 'e-velib'
-        self.itinerary_name = "e-velib"
+        self.itinerary_name = "Vélib électrique"
         self.picture_name = "electric-bike.png"
         self.grade = 0
         self.labels = []
@@ -399,7 +399,7 @@ class BirdItinerary(IndirectItinerary):
     """
     def __init__(self, start, end, **kwargs):
         self.name = 'bird'
-        self.itinerary_name = "en trotinette bird"
+        self.itinerary_name = "Bird"
         self.picture_name = "scooter.png"
         self.grade = 0
         self.labels = []

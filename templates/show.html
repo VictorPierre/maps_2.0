@@ -26,10 +26,24 @@
                 </div>
             {% endif %}
         {% endif %}
-        <div>Prix : {{budget}}</div>
-        <div>CO2: {{carbon_emission}}</div>
-        <div>Calories : {{calories}}</div>
-        <div>Note: {{grade}}</div>
+        <table>
+            <tr>
+                <td>Coût du trajet:</td>
+                <td>{{budget}}</td>
+            </tr>
+            <tr>
+                <td>CO<sub>2</sub> émis:</td>
+                <td>{{carbon_emission}}</td>
+            </tr>
+            <tr>
+                <td>Calories dépensées:</td>
+                <td>{{calories}}</td>
+            </tr>
+            <tr>
+                <td>La note maps_2.0:</td>
+                <td>{{grade}}/5</td>
+            </tr>
+        </table>
     </div>
 </div>
 
