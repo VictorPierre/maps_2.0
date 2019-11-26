@@ -13,7 +13,7 @@ Nous avons choisi de passer par une interface Web pour présenter les résultats
 ![Interface Maps 2.0](static/images/maps.png)
 
 Les résultats obtenus peuvent être filtrés en fonction des préférences de l'utilisateur:
- * Ses préférences: Trajet couvert, (préfère un trajet couvert ...) et aussi triés selon la durée, le prix ou d'autres critères. 
+ * Son état: si celui-ci est à mobilité réduite, ne veut pas être mouillé ou porte une charge lourde.
  * Si celui-ci possède bien le véhicule associé.
  * Si celui-ci préfère une classement selon un critère spécifique autre que notre note globale.
  
