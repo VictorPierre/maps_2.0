@@ -133,12 +133,13 @@ var showGeoJSON = function(geojson){
 var showMarkers = function(markers){
     for (var i = 0; i < markers.length; i++) {
         if(markers[i].description==""){
-            L.marker(markers[i].coordinates).addTo(map);
+            marker = L.marker(markers[i].coordinates).addTo(map);
         }
         else{
-            L.marker(markers[i].coordinates).addTo(map)
+            marker = L.marker(markers[i].coordinates).addTo(map)
                 .bindPopup(markers[i].description);
         }
+        if (i==0){marker.openPopup()}
     }
 }
 
