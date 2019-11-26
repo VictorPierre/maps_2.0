@@ -63,6 +63,11 @@ var initAlgolia = function (appId,apiKey) {
         apiKey: apiKey,
         aroundLatLng : "48.856496, 2.342510",
         aroundRadius : 7000,
+        templates: {
+            value: function(suggestion) {
+                return suggestion.name +', '+suggestion.city;
+            },
+        }
     };
 
     placesAutocompleteDepart = places(
