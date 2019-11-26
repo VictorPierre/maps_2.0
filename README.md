@@ -5,11 +5,14 @@ On se limitera à la ville de Paris et on se concentrera sur des critères tels 
 Une interface graphique n’est pas obligatoire pour ce projet.
 
 ## 1. Présentation et fonctionnalités
-TO DO
+Nous avons choisi de passer par une interface Web pour présenter les résultats de notre projet. Celle-ci permet de présenter des résultats pour des trajets entre deux points trouvés grâce aux deux barres de recherche.
 
+Les résultats obtenus peuvent être filtrés en fonction des préférences de l'utilisateur (préfère un trajet couvert ...) et aussi triés selon la distance, la durée ou d'autres critères. Le tri de s'effectue par défault avec notre recommandation qui trie les itinéraires selon un note calculé en pondérant différents critères.
 ## 2. POOA
-![GitHub Logo](/static/images/uml.png)
-Format: ![Alt Text](png)
+
+Voici l'architecture de nos classes pour ce projet. On a choisi de créer des classes pour chaque type d'itinéraire, qui héritent tous de la classe mère **Itinerary** et, pour celles qui sont composées de plusieurs itinéraires distincts, aussi de la classe **Indirect Itinerary**
+![Diagramme UML](static/images/uml.png)
+
 
 
 ## 3. Utilisation
