@@ -49,3 +49,11 @@ class Point:
         resp = reponse.json()
         return resp[0]['lat'], resp[0]['lon']
 
+    def to_marker(self, description=""):
+        """
+        Convert a point to a dict for rendering as a marker
+        :param description:
+        :return:
+        """
+        return {"coordinates":[self.lat, self.long], "description": description}
+

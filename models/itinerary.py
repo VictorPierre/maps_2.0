@@ -16,6 +16,7 @@ class Itinerary:
     - distance (int type, distance in meters)
     - duration (int type, duration in seconds)
     - geojson (dict, data for visualising the route)
+    - markers (list of markers to display on the map)
     - grade (our custom grade given considering carbon emissions, cost and duration
     - labels ('green', 'fast', or 'athletic', help to identify best itineraries in a category)
     - rain_compatible (boolean)
@@ -44,6 +45,7 @@ class Itinerary:
         self.calories_per_hour=0 # Si on a pas d'information on va partir du principe que cela n'est pas une activité sportive
         self.grade=0
         self.labels=[]
+        self.markers=[]
         self.rain_compatible=False # Si on a pas cette information on part du principe qu'il faut éviter en cas de pluie
         self.disability_compatible=False # Si on a pas cette information on part du principe qu'il faut éviter si en situation de PMR
         self.loaded_compatible=False
@@ -78,6 +80,7 @@ class Itinerary:
         return {
             "html": self.__html(**kwargs),
             "geojson": self.geojson,
+            "markers": self.markers,
         }
 
     def _check_compatibility(self, **kwargs):
@@ -158,6 +161,7 @@ class FootItinerary(Itinerary):
         self.C02_per_km = 0.2*245/5
         self.grade=0
         self.labels = []
+        self.markers = [start.to_marker(description="Départ"),end.to_marker(description="Arrivée")]
         self.rain_compatible = False
         self.disability_compatible = True
         self.loaded_compatible = True
@@ -184,6 +188,7 @@ class BikeItinerary(Itinerary):
         self.C02_per_km = 560*0.2/20
         self.grade = 0
         self.labels = []
+        self.markers = [start.to_marker(description="Départ"), end.to_marker(description="Arrivée")]
         self.rain_compatible = False
         self.disability_compatible = False
         self.loaded_compatible = False
@@ -212,6 +217,7 @@ class ElectricBikeItinerary(Itinerary):
         self.C02_per_km = 245*0.2/20 + 500*0.315/6
         self.grade = 0
         self.labels = []
+        self.markers = [start.to_marker(description="Départ"),end.to_marker(description="Arrivée")]
         self.rain_compatible = False
         self.disability_compatible = False
         self.loaded_compatible = True
@@ -237,6 +243,7 @@ class CarItinerary(Itinerary):
         self.C02_per_km = 166
         self.grade = 0
         self.labels = []
+        self.markers = [start.to_marker(description="Départ"),end.to_marker(description="Arrivée")]
         self.rain_compatible = True
         self.disability_compatible = True
         self.loaded_compatible = True
@@ -262,6 +269,7 @@ class UberItinerary(Itinerary):
         self.C02_per_km = 166
         self.grade = 0
         self.labels = []
+        self.markers = [start.to_marker(description="Départ"),end.to_marker(description="Arrivée")]
         self.rain_compatible = True
         self.disability_compatible = True
         self.loaded_compatible = True
@@ -300,6 +308,7 @@ class TransitItinerary(Itinerary):
         self.C02_per_km = 28
         self.grade = 0
         self.labels = []
+        self.markers = []
         self.rain_compatible = True
         self.disability_compatible = False
         self.loaded_compatible = True
@@ -320,6 +329,7 @@ class IndirectItinerary(Itinerary):
         self.distance = sum([route.distance for route in self.routes])
         self.duration = sum([route.duration for route in self.routes])
         self.geojson = [route.geojson for route in self.routes]
+        self.markers = []
         self.disability_compatible = np.all([route.disability_compatible for route in self.routes])
         self.rain_compatible = np.all([route.rain_compatible for route in self.routes])
         self.loaded_compatible = np.all([route.loaded_compatible for route in self.routes])
@@ -351,6 +361,7 @@ class VelibItinerary(IndirectItinerary):
         kwargs=self._kwargs_without_forbidden_vehicles(kwargs)
         self.routes = [FootItinerary(start,stationA, **kwargs), BikeItinerary(stationA, stationB, **kwargs), FootItinerary(stationB,end, **kwargs)]
         super().__init__(start, end)
+        self.markers = [start.to_marker(description="Départ"), stationA.to_marker(description="Prenez un des Vélibs disponibles"), stationB.to_marker(description="Déposez votre Vélib"), end.to_marker(description="Arrivée")]
 
     def budget(self):
         return velib.velib_cost(self.routes[1].duration)
@@ -380,6 +391,7 @@ class eVelibItinerary(IndirectItinerary):
                        FootItinerary(stationB, end, **kwargs)]
 
         super().__init__(start, end)
+        self.markers = [start.to_marker(description="Départ"), stationA.to_marker(description="Prenez un des Vélibs électriques disponibles"), stationB.to_marker(description="Déposez votre Vélib électrique"), end.to_marker(description="Arrivée")]
 
     def budget(self):
         return velib.evelib_cost(self.routes[1].duration)
@@ -408,6 +420,7 @@ class BirdItinerary(IndirectItinerary):
         self.routes = [FootItinerary(start,scooter, **kwargs), ElectricBikeItinerary(scooter, end, **kwargs)]
         ## We assume Bird speed is similar to Bike speed which might be optimistic
         super().__init__(start, end)
+        self.markers = [start.to_marker(description="Départ"), scooter.to_marker(description="Trotinette Bird disponible"), end.to_marker(description="Arrivée")]
 
     def budget(self):
         return bird.cost(self.routes[1].duration)
